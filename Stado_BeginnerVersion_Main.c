@@ -3,27 +3,20 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 //TODO: Kada budemo imali implementaciju iscrtavanja ovce i funkcionalnosti njenog kretanja,
 //      sve neophodne funkcije i konstante ce biti deklarisane u ovom fajlu.
 //#include "sheep.h"
-
+#include "colors.h" //Ovde cuvamo boje koje koristimo u igri
+#include "inits.h" //Ovde nam se nalaze deklaracije inicijalizacionih funkcija
 
 char Name[]= "Stado - sacuvaj sve ovce! 🐑"; //Naslov prozora - i ime igre :)
 int NumOfSheeps, Level;  //Ovde cuvamo broj ovaca, odnosno nivo igre
+int width,height;
 
-#define WINDOW_HEIGHT (800)    // Konstanta za duzinu prozora
-#define WINDOW_WIDTH  (1000)   // Konstanta za sirinu prozora
-#define WINDOW_POSITION_X (400)  // Konstanta za poziciju prozora
-#define WINDOW_POSITION_Y (100)  // Konstanta za poziciju prozora
-                              //TODO: Vrednosti koje smestaju prozor u centar naseg ekrana
-                              
-static void gameDataInitialization();  //Funkcija za unos podataka o igri
-static void graphicsInitialization(); //Neophodne graficke inicijalizacije
 //TODO: static void drawClouds();             //Crtanje oblaka
 static void onDisplayFunction();      // Funkcija za obradu dogadjaja
 //TODO: static void onKeyboardFunction();  // Funkcija koja reaguje na dogadjaje sa tastature
-//TODO: static void onReshapeFunction();   // Funkcija koja reaguje na promene velicine prozora
+static void onReshapeFunction(int width, int height);   // Funkcija koja reaguje na promene velicine prozora
 int main(int argc, char* argv[])
 {
    gameDataInitialization();
@@ -36,6 +29,19 @@ int main(int argc, char* argv[])
    return 0;
 }
 
+void onDisplayFunction()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    //drawClouds();
+    glutSwapBuffers();
+}
+
+void onReshapeFunction(int w, int h)
+{
+    width=w;
+    height=h;
+}
+    
 
 void gameDataInitialization()
 {
@@ -57,13 +63,6 @@ void graphicsInitialization()
     glutCreateWindow(Name);
     
     glutDisplayFunc(onDisplayFunction);  //Registrujemo callback
-    glClearColor(0.6,0.7,1,0);  //Boja neba - pre nego sto postavimo osvetljenje
+    glClearColor(COLOR_SKY_R,COLOR_SKY_G,COLOR_SKY_B,0);  //Boja neba - pre nego sto postavimo osvetljenje
     return;
-}
-
-void onDisplayFunction()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    //drawClouds();
-    glutSwapBuffers();
 }
