@@ -61,7 +61,6 @@ void graphicsInitialization()
     glutInitWindowSize(WINDOW_WIDTH,WINDOW_HEIGHT); //Kreiranje prozora i neophodne inicijalizacije
     glutInitWindowPosition(WINDOW_POSITION_X,WINDOW_POSITION_Y);
     glutCreateWindow(Name);
-    
     glutDisplayFunc(onDisplayFunction);  //Registrujemo callback
     glClearColor(COLOR_SKY_R,COLOR_SKY_G,COLOR_SKY_B,0);  //Boja neba - pre nego sto postavimo osvetljenje
     return;
