@@ -7,7 +7,7 @@
 #define WINDOW_POSITION_Y (100)  // Konstanta za poziciju prozora
                               //TODO: Vrednosti koje smestaju prozor u centar naseg ekrana
                               
-static void gameDataInitialization();  //Funkcija za unos podataka o igri
-static void graphicsInitialization(); //Neophodne graficke inicijalizacije
+void gameDataInitialization();  //Funkcija za unos podataka o igri
+void graphicsInitialization(); //Neophodne graficke inicijalizacije
 
 #endif
