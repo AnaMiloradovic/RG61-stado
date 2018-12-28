@@ -13,18 +13,16 @@
 #include "levels.h" //Datoteka sa brzinama po nivoima
 #include "game_dynamics.h" //Funckije za kretanja u igri
 
-/*#define TIMER_ID_0 0 //TODO: ID odgovarajuceg tajmera, neka za sad ovako ostane.
-#define TIMER_INTERVAL 20 //TODO: Period ponovnog pozivanja tajmera*/
-
 extern BALL Balls[];
+extern CLOSER Closer;
 extern char Name[];
 extern int NumOfSheeps, Level;
-
+extern int on_going;
+extern int closing;
+const char pause[] = "Pauza";
+#define PAUZE_LEN (5)
 // NOTE: Za sada cemo ovde apstrahovati ovce belim kuglama koje se kotrljaju po
 // terenu, pa cemo mozda u nekoj od poslednjih iteracija zameniti ovcama.
-
-//TODO: static void onKeyboardFunction();  // Funkcija koja reaguje na dogadjaje sa tastature
-
 int main(int argc, char* argv[])
 {
    gameDataInitialization();
@@ -44,12 +42,12 @@ void onDisplayFunction()
     
     drawClouds();
     setSunLight();
-    setMeadowMaterial(); // Postavljamo materijal na livadu
 
     glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
     glLoadIdentity();        // Cistimo matricu od prethodnog smeca.
     gluLookAt(0,5,13,0,0,0,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 
+    setMeadowMaterial(); // Postavljamo materijal na livadu
     glPushMatrix(); // Iscrtavamo livadu(glavni teren) gde ce nam trcati ovce.
     drawMeadow(); // Ne radimo glPopMatrix(), jer hocemo da nam na dalje koordinatni sistem bude
                                                                 // vezan za teren.
@@ -57,15 +55,30 @@ void onDisplayFunction()
     initialPos();   // Inicijalizujemo pocetne pozicije kugli
     glPushMatrix();
     drawBalls();   // Iscrtavamo kugle
-    
     glPopMatrix();
     
     glPushMatrix();
     setCloserMaterial(); 
     drawCloser();  // Iscrtavamo valjak
     glPopMatrix();
+    
+    
     glPopMatrix();
-    glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
+    if(on_going)
+    {
+       glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
+    }
+    else
+    {
+        /*glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, -1.0, 1.0);*/
+        glColor3f(1,0,0);
+        glRasterPos3f((float)WINDOW_WIDTH/2,(float)WINDOW_HEIGHT/2,0.5);
+        int i;
+        for(i=0;i<PAUZE_LEN;i++)
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,pause[i]);
+    }
     glutSwapBuffers();
 }
     

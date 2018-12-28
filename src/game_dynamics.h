@@ -8,5 +8,4 @@
 void rollingBalls(int timer_id);  // Funkcija kojom implementiramo kretanje kugli
 void colissionDetection();     // Funkcija za detekciju sudara
 void colissionInField(int collision[]);      // Pomocna funkcija za collisionDetection()
-
 #endif

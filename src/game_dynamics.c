@@ -14,7 +14,10 @@
 #include "game_dynamics.h" //Funckije za kretanja u igri
 
 extern BALL Balls[];
+extern CLOSER Closer;
 extern int NumOfSheeps;
+int on_going = 1;
+int closing = 0;
 
 void rollingBalls(int timer_id)
 {
@@ -33,25 +36,8 @@ void rollingBalls(int timer_id)
     else if(Balls[i].angle < 360)
         Balls[i].angle += 360;
     colissionDetection();
-    
-    /*pozX += vX;
-    if(pozX + 1 >= 5/0.5 || pozX  - 1 <= -5/0.5) {
 
-        vX = -vX;
-        d_angle = 360 -d_angle;
-    }
-    pozZ += vZ;
-    if(pozZ + 1 >= 10/0.5 || pozZ  - 1 <= -10/0.5) {
-        vZ = -vZ;
-        d_angle = 360 -d_angle;
-    }
-    angle += d_angle;
-    if(angle > 360)
-        angle -= 360;
-    if(angle < 0)
-        angle += 360;*/
     glutPostRedisplay();
-
 }
 
 void colissionDetection()
@@ -75,12 +61,12 @@ void colissionDetection()
     int i,colission[]={1,1,1,1,1};
     for(i=0;i<NumOfSheeps;i++)
     {
-        if(Balls[i].pX + 1 >= Balls[i].maxX || Balls[i].pX  - 1 <= Balls[i].minX)
+        if(Balls[i].pX + ((float)RADIUS/MEADOWDIMENSION_X) >= Balls[i].maxX || Balls[i].pX  - ((float)RADIUS/MEADOWDIMENSION_X) <= Balls[i].minX)
         {
             Balls[i].vX = -Balls[i].vX;
             Balls[i].w_angle = - Balls[i].w_angle;
         }
-        if(Balls[i].pZ + 1 >= Balls[i].maxZ || Balls[i].pZ  - 1 <= Balls[i].minZ)
+        if(Balls[i].pZ + ((float)RADIUS/MEADOWDIMENSION_Z) >= Balls[i].maxZ || Balls[i].pZ  - ((float)RADIUS/MEADOWDIMENSION_Z) <= Balls[i].minZ)
         {
             Balls[i].vZ = -Balls[i].vZ;
             Balls[i].w_angle = - Balls[i].w_angle;
@@ -191,3 +177,4 @@ void colissionDetection()
 //             colission[i] = NOT_TO_CHECK;
 //         }
 // }
+

@@ -17,8 +17,6 @@
 #define MEADOWDIMENSION_Z (10) 
 #define RADIUS (0.5)
 
-
-
 typedef struct {
     float pX,pZ, // Pozicija na terenu
          minX, maxX, // Granice u okviru kojih je (kugla),
@@ -30,7 +28,16 @@ typedef struct {
                      // jer su funkcije sin i cos vremenski skupe da bi se svaki put racunale.
     angle,w_angle;  // Tekuci ugao rotacije i ugaona brzina kotrljanja kugle
 } BALL;
-                               
+
+typedef struct {
+    float pX, pY, pZ, v;
+} CLOSER;
+
+
+typedef struct {
+    float pX,pY,pZ;
+} POINT;
+
 void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije
 void initialPos(); //inicijalizacije pocetnu poziciju kugli

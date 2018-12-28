@@ -10,6 +10,7 @@
 #include "draw_objects.h"
 
 extern BALL Balls[];
+extern CLOSER Closer;
 extern int NumOfSheeps, Level;
 
 
@@ -48,21 +49,19 @@ void drawMeadow()
 
 void drawBalls()
 {
-    glScalef(RADIUS/MEADOWDIMENSION_X,2,RADIUS/MEADOWDIMENSION_Z);
     int i;
     for(i=0;i< NumOfSheeps;i++)
     {
-       glPushMatrix();
-       glTranslatef(Balls[i].pX,1.5,Balls[i].pZ);
+       glTranslatef(Balls[i].pX,1+ ((float)RADIUS/MEADOWDIMENSION_Y),Balls[i].pZ);
+       glScalef(RADIUS/MEADOWDIMENSION_X,2,RADIUS/MEADOWDIMENSION_Z);
        glRotatef(Balls[i].angle,1,0,0);
-       glutSolidSphere(1,16,16);
-       glPopMatrix();
+       glutSolidSphere(1,20,20);
     }
 }
 
 void drawClouds()
 {
-    //glLineWidth(5);
+    glPointSize(1.5);
     glDisable(GL_LIGHTING);
     glColor3f(0.97,0.97,0.97);   // Boja oblaka
     srand(time(NULL)); //Inicijalizujemo random-generator koji ce nam nasumicno generisati pozicije tackica u oblacicicma
@@ -72,7 +71,7 @@ void drawClouds()
             cZMin, cZMax;
     int  i,thickness; // Redom, pomocna indeksna promenljiva i gustina oblaka(ukupan broj tackica u oblaku)
     cXMin = -5, cXMax = 5;  // Prvi crtamo tako da moze da se proteze od zadnjeg desnog coska
-    cYMin = 3.5, cYMax = 5;
+    cYMin = 4.5, cYMax = 6;
     cZMin = 0, cZMax = 10;
     glBegin(GL_POINTS);
     thickness=2000;
@@ -123,8 +122,8 @@ void drawClouds()
 void drawCloser()
 {
     glPushMatrix();
-    glTranslatef(0,10,1);
-    glScalef(RADIUS*((float) 1/MEADOWDIMENSION_X),(float)1/MEADOWDIMENSION_Y,RADIUS*((float) 1/MEADOWDIMENSION_Z));
+    glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
+    glScalef(0.5*((float) 1/MEADOWDIMENSION_X),(float)1/MEADOWDIMENSION_Y,0.5*((float) 1/MEADOWDIMENSION_Z));
     float h,u;
     glBegin(GL_TRIANGLE_FAN);
     glNormal3f(0,1,0);
@@ -136,9 +135,9 @@ void drawCloser()
            }
     glEnd();
     
-    glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_STRIP);
     for(h=1-PI/20;h>-1-EPSILON;h-=PI/20)
-        for(u=0;u<=2*PI;u+=PI/20)
+        for(u=0;u<=2*PI+ EPSILON;u+=PI/20)
         {
             glNormal3f(cos(u),0,sin(u));
             glVertex3f(cos(u),h,sin(u));

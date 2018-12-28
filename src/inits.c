@@ -12,7 +12,7 @@
 char Name[]= "Stado - sacuvaj sve ovce! 🐑";  //Naslov prozora - i ime igre :)
 int NumOfSheeps, Level;
 BALL Balls[MAX_NUM_OF_SHEEPS];
-
+CLOSER Closer;
 
 void graphicsInitialization()
 {
@@ -21,6 +21,7 @@ void graphicsInitialization()
     glutCreateWindow(Name);
     glutDisplayFunc(onDisplayFunction);  //Registrujemo callback funkcije
     glutReshapeFunc(onReshapeFunction);
+    glutKeyboardFunc(onKeyboardFunction);
     glClearColor(COLOR_SKY_R,COLOR_SKY_G,COLOR_SKY_B,0);  //Boja neba - pre nego sto postavimo osvetljenje
     glEnable(GL_DEPTH_TEST);
     return;
@@ -70,17 +71,22 @@ void initialPos()
     for(i=0;i<NumOfSheeps;i++)
     {
        // Ovakvim racunanjem se obezbedjujemo da sigurno ne dodje do kolizije pri inicijalnom iscrtavanju kugli
-       Balls[i].pX = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(MEADOWDIMENSION_X/RADIUS - 1))+(-MEADOWDIMENSION_X/RADIUS+1+((float)i/NumOfSheeps)*(2*(MEADOWDIMENSION_X/RADIUS-1)));  
-       Balls[i].pZ = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(MEADOWDIMENSION_Z/RADIUS - 1))+(-MEADOWDIMENSION_Z/RADIUS+1+((float)i/NumOfSheeps)*(2*(MEADOWDIMENSION_Z/RADIUS-1)));
+       Balls[i].pX = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_X - 1))+(-RADIUS/MEADOWDIMENSION_X+1+((float)i/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_X-1)));  
+       Balls[i].pZ = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_Z - 1))+(-RADIUS/MEADOWDIMENSION_Z+1+((float)i/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_Z-1)));
        Balls[i].angle = 0;
-       Balls[i].minX = -MEADOWDIMENSION_X/RADIUS;
-       Balls[i].maxX = MEADOWDIMENSION_X/RADIUS;
-       Balls[i].minZ = -MEADOWDIMENSION_Z/RADIUS;
-       Balls[i].maxZ = MEADOWDIMENSION_Z/RADIUS;
+       Balls[i].minX = -1;
+       Balls[i].maxX = 1;
+       Balls[i].minZ = -1;
+       Balls[i].maxZ = 1;
        Balls[i].alfa= ((float)rand()/RAND_MAX)*2*PI;
        Balls[i].vX = v*cos(Balls[i].alfa);
        Balls[i].vZ = v*sin(Balls[i].alfa);
-       Balls[i].w_angle = 3;
+       Balls[i].w_angle = v/RADIUS;
     }
-    isCalled =1; //Posle ovoga se vise nece pozivati
+    
+    Closer.pX = 0;
+    Closer.pY = 10;
+    Closer.pZ = 1;
+    Closer.v  = 2*v;
+    isCalled =1; //Posle ovoga se vise nece inicijalizovati podaci.
 }

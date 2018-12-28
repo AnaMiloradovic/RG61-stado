@@ -9,8 +9,6 @@
 #include "draw_objects.h" //Funckije za iscrtavanje objekata
 #include "light_and_materials.h" //Funkcije za podesavanje osvetljenja i postavljanje materijala
 
-
-
 void setSunLight()
 {   
     // Pozicija i komponente osvetljenja
