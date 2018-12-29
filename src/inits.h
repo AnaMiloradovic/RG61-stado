@@ -8,13 +8,13 @@
                               //TODO: Vrednosti koje smestaju prozor u centar naseg ekrana
 #define MAX_NUM_OF_SHEEPS (5) // Maksimalan moguc broj ovaca 
 
-#define NOT_TO_CHECK (0) // Ne proverava se kolizija sa i-tom kuglom u nizu
-#define TO_CHECK (1)    // Proverava se kolizija sa i-tom kuglom u nizu
+#define NOT_TO_CHECK (0) //TODO Ne proverava se kolizija sa i-tom kuglom u nizu
+#define TO_CHECK (1)    //TODO Proverava se kolizija sa i-tom kuglom u nizu
 
 //Dimenzje livade i poluprecnik kugle (u svetskom koordinatnom sistemu)
-#define MEADOWDIMENSION_X (5)
+#define MEADOWDIMENSION_X (5.0)
 #define MEADOWDIMENSION_Y (0.25) 
-#define MEADOWDIMENSION_Z (10) 
+#define MEADOWDIMENSION_Z (10.0) 
 #define RADIUS (0.5)
 
 typedef struct {

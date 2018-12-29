@@ -32,10 +32,12 @@ void rollingBalls(int timer_id)
     }
     
     if(Balls[i].angle > 360)
-        Balls[i].angle -= 360;
-    else if(Balls[i].angle < 360)
-        Balls[i].angle += 360;
+       Balls[i].angle -= 360;
+    else if(Balls[i].angle < -360)
+       Balls[i].angle += 360;
     colissionDetection();
+
+
 
     glutPostRedisplay();
 }
@@ -58,123 +60,41 @@ void colissionDetection()
     // u ovoj strategiji bismo isli dublje sa podelom. Teren bismo delili sve dok u nekom
     // segmentu ne ostanu do najvise dve kugle.
     
-    int i,colission[]={1,1,1,1,1};
+    int i,j,colission[]={TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK};
     for(i=0;i<NumOfSheeps;i++)
     {
         if(Balls[i].pX + ((float)RADIUS/MEADOWDIMENSION_X) >= Balls[i].maxX || Balls[i].pX  - ((float)RADIUS/MEADOWDIMENSION_X) <= Balls[i].minX)
         {
             Balls[i].vX = -Balls[i].vX;
             Balls[i].w_angle = - Balls[i].w_angle;
+            colission[i] = NOT_TO_CHECK;
         }
         if(Balls[i].pZ + ((float)RADIUS/MEADOWDIMENSION_Z) >= Balls[i].maxZ || Balls[i].pZ  - ((float)RADIUS/MEADOWDIMENSION_Z) <= Balls[i].minZ)
         {
             Balls[i].vZ = -Balls[i].vZ;
             Balls[i].w_angle = - Balls[i].w_angle;
+            colission[i] = NOT_TO_CHECK;
         }
     }
-}
-//         if(colission[i])
-//         {
-//             int j;
-//             for(j=i+1;j<NumOfSheeps;j++)
-//                if(colission[j])
-//                 {
-//                     if(fabs(Balls[i].pX-Balls[j].pX) <= 2)
-//                     {
-//                         Balls[i].vX = -Balls[i].vX;
-//                         Balls[i].w_angle = - Balls[i].w_angle;
-//                         Balls[j].vX = -Balls[j].vX;
-//                         Balls[j].w_angle = - Balls[j].w_angle;
-//                         colission[j] = 0;
-//                     }
-//             
-//          }
-// 
-//             for(j=i+1;j<NumOfSheeps;j++)
-//                if(colission[j])
-//                if(fabs(Balls[i].pZ-Balls[j].pZ) <= 2)
-//                     {
-//                         Balls[i].vZ = -Balls[i].vZ;
-//                         Balls[i].w_angle = - Balls[i].w_angle;
-//                         Balls[j].vZ = -Balls[j].vZ;
-//                         Balls[j].w_angle = - Balls[j].w_angle;
-//                         colission[j] = 0;
-//                     }
-//             colission[i]=0;
-//         }
-// 
-//     }
-//}
     
-//     int colission[NumOfSheeps]; //Indikatorski niz koji cemo koristiti pri ispitivanju kolizije
-//     for(i=0;i<NumOfSheeps;i++)  //Ispitujemo prvo donji levi kvadrant
-//     {
-//         if(Balls[i].pX + 1 < 0 && Balls[i].pZ + 1 < 0)
-//             colission[i] = TO_CHECK;
-//         else colission[i] = NOT_TO_CHECK;
-//     }
-//     
-//     colissionInField(colission); // Zatim medju kuglama u kvadrantu ispitamo koliziju
-//     // Analogno radimo i za ostale kvadrante
-//     
-//     for(i=0;i<NumOfSheeps;i++)  // Gornji levi kvadrant
-//     {
-//         if(Balls[i].pX + 1 < 0 && Balls[i].pZ + 1 >= 0)
-//             colission[i] = TO_CHECK;
-//         else colission[i] = NOT_TO_CHECK;
-//     }
-//     
-//     colissionInField(colission);
-//     
-//         for(i=0;i<NumOfSheeps;i++)  // Donji desni kvadrant
-//     {
-//         if(Balls[i].pX + 1 >= 0 && Balls[i].pZ + 1 < 0)
-//             colission[i] = TO_CHECK;
-//         else colission[i] = NOT_TO_CHECK;
-//     }
-//     
-//     colissionInField(colission);
-//     
-//     for(i=0;i<NumOfSheeps;i++)  //Gornjii desni kvadrant
-//     {
-//         if(Balls[i].pX + 1 >= 0 && Balls[i].pZ + 1 >= 0)
-//             colission[i] = TO_CHECK;
-//         else colission[i] = NOT_TO_CHECK;
-//     }
-//     
-//     colissionInField(colission);
-
-
-
-// void colissionInField(int colission[])
-// {
-//         int i;
-//         for(i=0;i<NumOfSheeps;i++)
-//         if(colission[i])
-//         {
-//             int j;
-//             for(j=i;j<NumOfSheeps;j++)
-//             {
-//                 if(colission[j])
-//                 {
-//                     if(fabs(Balls[i].pX-Balls[j].pX) <= 2)
-//                     {
-//                         Balls[i].vX = -Balls[i].vX;
-//                         Balls[i].w_angle = - Balls[i].w_angle;
-//                         Balls[j].vX = -Balls[j].vX;
-//                         Balls[j].w_angle = - Balls[j].w_angle;
-//                     }
-//                     if(fabs(Balls[i].pZ-Balls[j].pZ) <= 2)
-//                     {
-//                         Balls[i].vZ = -Balls[i].vZ;
-//                         Balls[i].w_angle = - Balls[i].w_angle;
-//                         Balls[j].vZ = -Balls[j].vZ;
-//                         Balls[j].w_angle = - Balls[j].w_angle;
-//                     }
-//                 }
-//                 colission[j] = NOT_TO_CHECK;
-//             }
-//             colission[i] = NOT_TO_CHECK;
-//         }
-// }
-
+    for(i=0;i<NumOfSheeps;i++)
+        for(j=i+1;j<NumOfSheeps;j++)
+        {
+            if(MEADOWDIMENSION_X*MEADOWDIMENSION_X*(Balls[i].pX-Balls[j].pX)*(Balls[i].pX-Balls[j].pX) +
+                 MEADOWDIMENSION_Z*MEADOWDIMENSION_Z*(Balls[i].pZ-Balls[j].pZ)*(Balls[i].pZ-Balls[j].pZ) - RADIUS*RADIUS*2*2 < EPSILON)  
+            {
+                if(colission[i])
+                {
+                   Balls[i].vX = -Balls[i].vX;
+                   Balls[i].vZ = -Balls[i].vZ;
+                   colission[i]= NOT_TO_CHECK;
+                }
+                if(colission[j])
+                {
+                   Balls[j].vX = -Balls[j].vX;
+                   Balls[j].vZ = -Balls[j].vZ;
+                   colission[j] = NOT_TO_CHECK;
+                }
+            }
+        }
+}

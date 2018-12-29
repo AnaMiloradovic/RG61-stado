@@ -3,7 +3,7 @@
 
 //Dodatne simbolicke konstante
 #define PI (3.141592653589793)
-#define EPSILON (0.01)
+#define EPSILON (0.001)
 
 void drawMeadow();              // Iscrtavanje livade
 void drawBalls();              //Iscrtavanje kugli

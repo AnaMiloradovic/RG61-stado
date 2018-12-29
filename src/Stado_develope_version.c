@@ -19,8 +19,6 @@ extern char Name[];
 extern int NumOfSheeps, Level;
 extern int on_going;
 extern int closing;
-const char pause[] = "Pauza";
-#define PAUZE_LEN (5)
 // NOTE: Za sada cemo ovde apstrahovati ovce belim kuglama koje se kotrljaju po
 // terenu, pa cemo mozda u nekoj od poslednjih iteracija zameniti ovcama.
 int main(int argc, char* argv[])
@@ -68,17 +66,6 @@ void onDisplayFunction()
     {
        glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
     }
-    else
-    {
-        /*glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, -1.0, 1.0);*/
-        glColor3f(1,0,0);
-        glRasterPos3f((float)WINDOW_WIDTH/2,(float)WINDOW_HEIGHT/2,0.5);
-        int i;
-        for(i=0;i<PAUZE_LEN;i++)
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,pause[i]);
-    }
     glutSwapBuffers();
 }
-    
+    // TODO: U reshape-u postavi da vratis projekciju

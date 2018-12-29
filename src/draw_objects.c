@@ -52,10 +52,12 @@ void drawBalls()
     int i;
     for(i=0;i< NumOfSheeps;i++)
     {
+       glPushMatrix();
        glTranslatef(Balls[i].pX,1+ ((float)RADIUS/MEADOWDIMENSION_Y),Balls[i].pZ);
        glScalef(RADIUS/MEADOWDIMENSION_X,2,RADIUS/MEADOWDIMENSION_Z);
        glRotatef(Balls[i].angle,1,0,0);
        glutSolidSphere(1,20,20);
+       glPopMatrix();
     }
 }
 
