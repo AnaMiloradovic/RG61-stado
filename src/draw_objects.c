@@ -8,11 +8,13 @@
 #include "inits.h" //Ovde nam se nalaze deklaracije inicijalizacionih funkcija
 #include "callbacks.h" //Callback funckije
 #include "draw_objects.h"
+#include "light_and_materials.h"
+#include "sheep.h"
 
 extern BALL Balls[];
 extern CLOSER Closer;
 extern int NumOfSheeps, Level;
-
+extern int on_going;
 
 void drawMeadow()
 {
@@ -50,6 +52,7 @@ void drawMeadow()
 void drawBalls()
 {
     int i;
+    setBallMaterial(); // Postavljamo materijal na kugle
     for(i=0;i< NumOfSheeps;i++)
     {
        glPushMatrix();
@@ -58,6 +61,24 @@ void drawBalls()
        glRotatef(Balls[i].angle,1,0,0);
        glutSolidSphere(1,20,20);
        glPopMatrix();
+    }
+}
+
+void drawSheeps()
+{
+    for(int i=0;i< NumOfSheeps;i++)
+    {
+        glPushMatrix();
+        glTranslatef(Balls[i].pX,1+ ((float)RADIUS/MEADOWDIMENSION_Y),Balls[i].pZ);
+        glScalef(1/MEADOWDIMENSION_X,1/MEADOWDIMENSION_Y,1/MEADOWDIMENSION_Z);
+        drawSheep(Balls[i].angle/180*PI);
+        glPopMatrix();
+    }
+    if(on_going)
+    {
+       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
+       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
+       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
     }
 }
 
@@ -147,5 +168,20 @@ void drawCloser()
         }
     glEnd();
     glPopMatrix();
+}
+
+void jumping(int timer_id)
+{
+    if(timer_id != TIMER_ID_JUMPING)
+        return;
+    for(int i=0;i<NumOfSheeps;i++)
+    {
+        Balls[i].angle += Balls[i].w_angle;
+    if(Balls[i].angle > 360)
+        Balls[i].angle -= 360;
+    else if(Balls[i].angle < 360)
+        Balls[i].angle += 360;
+    }
+    glutPostRedisplay();
 }
     

@@ -19,8 +19,6 @@
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
-         minX, maxX, // Granice u okviru kojih je (kugla),
-         minZ, maxZ, // inicijalno su velicine terena , trebace nam kada budemo zagradjivali
            vX, vZ,   // X i Z komponente brzine (zavisice i od samog nivoa, od koga zavisi intenzitet ukupne brzine,
               alfa,   // ali i od ugla alfa koji odredjuje odnos ove dve brzine.
                      // Ako je v ukupna brzina, onda je vX = v*cos(alfa) i vZ = v*sin(alfa).
@@ -35,7 +33,7 @@ typedef struct {
 
 
 typedef struct {
-    float pX,pY,pZ;
+    float pX,pZ;
 } POINT;
 
 void gameDataInitialization();  //Funkcija za unos podataka o igri

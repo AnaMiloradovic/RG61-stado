@@ -5,11 +5,13 @@
 #include "colors.h"
 #include "inits.h"
 #include "callbacks.h"
+#include "game_dynamics.h"
 
 int width,height;
 extern int on_going;
 extern CLOSER Closer;
-extern int close;
+extern int closing;
+extern unsigned char moving;
 void onReshapeFunction(int w, int h)
 {
     width=w;
@@ -37,21 +39,42 @@ void onKeyboardFunction(unsigned char key, int x, int y)
             Closer.pX -= Closer.v;
             if(Closer.pX < -1)
                 Closer.pX = -1;
+            if(closing)
+            {
+                moving = key;
+            }
             break;
         case 'k':
             Closer.pZ += Closer.v;
             if(Closer.pZ > 1)
                 Closer.pZ = 1;
+            if(closing)
+            {
+                moving = key;
+            }
             break;
         case 'l':
             Closer.pX += Closer.v;
             if(Closer.pX > 1)
                 Closer.pX = 1;
+            if(closing)
+            {
+                moving = key;
+            }
             break;
         case 'i':
             Closer.pZ -= Closer.v;
             if(Closer.pZ < -1)
                 Closer.pZ = -1;
+            if(closing)
+            {
+                moving = key;
+            }
+            break;
+        case ' ':
+            moving = ' ';
+            if(!closing)
+                tryToClose();
             break;
     }
 }
