@@ -93,7 +93,7 @@ void tryToClose()
 {
     static POINT turningPoints[MAX];
     static int numOfTurningPoints = 0;
-    //static int isBegin=1;
+    static int isBegin=1;
     static unsigned char currentMoving = ' ';
     glDisable(GL_LIGHT0);
     glDisable(GL_LIGHTING);
@@ -120,6 +120,10 @@ void tryToClose()
         currentMoving = moving;
         return;
     }
+
+    if(isBegin && ( ( (turningPoints[0].pX == minX || turningPoints[0].pX == maxX) && fabs(Closer.pX - turningPoints[0].pX) > EPSILON) ||
+            ( (turningPoints[0].pZ == minZ || turningPoints[0].pZ == maxZ) && fabs(Closer.pZ - turningPoints[0].pZ) > EPSILON) ) )
+            isBegin = 0;
     
     if(moving != currentMoving)
     {
@@ -127,6 +131,7 @@ void tryToClose()
         if(abs(currentMoving - moving) == 2)
         {
             printf("KRAJ ISCRTAVANJA: suprotan smer, neuspesno\n");
+            isBegin = 1;
            numOfTurningPoints=0;
            currentMoving = ' ';
            closing = 0;
@@ -183,6 +188,7 @@ void tryToClose()
                      (Balls[i].pZ >= turningPoints[j+1].pZ - EPSILON && Balls[i].pZ <= turningPoints[j].pZ + EPSILON)))
                     {
                         printf("KRAJ ISCRTAVANJA, nagazila ovca, neuspesno!\n");
+                        isBegin = 1;
                         closing =0;
                         numOfTurningPoints = 0;
                         currentMoving = ' ';
@@ -196,6 +202,7 @@ void tryToClose()
                      (Balls[i].pX >= turningPoints[j+1].pX - EPSILON && Balls[i].pX <= turningPoints[j].pX + EPSILON)))
                     {
                         printf("KRAJ ISCRTAVANJA, nagazila ovca, neuspesno!\n");
+                        isBegin = 1;
                         closing =0;
                         numOfTurningPoints = 0;
                         currentMoving = ' ';
@@ -215,6 +222,7 @@ void tryToClose()
                      (Balls[i].pZ >= turningPoints[numOfTurningPoints].pZ - EPSILON && Balls[i].pZ <= Closer.pZ + EPSILON)))
                     {
                         printf("KRAJ ISCRTAVANJA, nagazila ovca, neuspesno!\n");
+                        isBegin = 1;
                         closing =0;
                         numOfTurningPoints = 0;
                         currentMoving = ' ';
@@ -228,6 +236,7 @@ void tryToClose()
                      (Balls[i].pX >= turningPoints[numOfTurningPoints].pX - EPSILON && Balls[i].pX <= Closer.pX + EPSILON)))
                     {
                         printf("KRAJ ISCRTAVANJA, nagazila ovca, neuspesno!\n");
+                        isBegin = 1;
                         closing =0;
                         numOfTurningPoints = 0;
                         currentMoving = ' ';
@@ -236,11 +245,12 @@ void tryToClose()
         }
     }
     
-    if(currentMoving != ' ' && ( fabs(Closer.pX - maxX) < EPSILON || fabs(Closer.pX - minX) < EPSILON
+    if(!isBegin  && ((numOfTurningPoints == 3 && turningPoints[0].pX == Closer.pX && turningPoints[0].pZ == Closer.pZ ) || fabs(Closer.pX - maxX) < EPSILON || fabs(Closer.pX - minX) < EPSILON
         || fabs(Closer.pZ - maxZ) < EPSILON || fabs(Closer.pZ - minZ) < EPSILON) )
     {
         //checkToClosedSurface(turningPoints,numOfTurningPoints);
         printf("KRAJ ISCRTAVANJA, USPESNO!\n");
+        isBegin = 1;
         numOfTurningPoints=0;
         currentMoving = ' ';
         closing = 0;
