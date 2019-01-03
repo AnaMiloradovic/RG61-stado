@@ -19,6 +19,8 @@ extern float minX,maxX,minZ,maxZ;
 int on_going = 1;
 int closing = 0;
 unsigned char moving;
+extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
+extern int NumOf
 void rollingBalls(int timer_id)
 {
     if(timer_id != TIMER_ID_ROLLING)
@@ -128,6 +130,15 @@ void tryToClose()
     if(moving != currentMoving)
     {
         numOfTurningPoints++;
+        if(numOfTurningPoints >= MAX)
+        {
+            printf("KRAJ ISCRTAVANJA: previse prelomnih tacaka, neuspesno, neuspesno\n");
+            isBegin = 1;
+            numOfTurningPoints=0;
+            currentMoving = ' ';
+            closing = 0;
+            return;
+        }
         if(abs(currentMoving - moving) == 2)
         {
             printf("KRAJ ISCRTAVANJA: suprotan smer, neuspesno\n");
@@ -258,7 +269,7 @@ void tryToClose()
     }
 }
 
-/*void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
+void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
 {
     
-}*/
+}

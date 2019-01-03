@@ -15,6 +15,14 @@ int NumOfSheeps, Level;
 float minX,maxX,minZ,maxZ;
 BALL Balls[MAX_NUM_OF_SHEEPS];
 CLOSER Closer;
+SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  //Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri
+                                                       // Azurirace se svaki put ako igrac uspe da zatvori odredjeni deo slobodne povrsine
+int NumOfClosedSurfaces = 0; //Broj delova uspesno zatvorene povrsine
+
+//TODO (Da se mozda i doradi) Informacije neophodne za samu igru -----
+float PercentOfCoveredField = 0; //Procenat uspesno zatvorene povrsine (kada se dodje do trazenog procenta, u zavisnosti od broja ovaca, igrac je pobedio)
+float PercentNeedForWin;          // Neophodan procenat za pobedu (utvrdjuje se na pocetku igre, kada se ucitaju nivo i broj ovaca)
+// -----
 
 void graphicsInitialization()
 {

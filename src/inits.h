@@ -8,14 +8,16 @@
                               //TODO: Vrednosti koje smestaju prozor u centar naseg ekrana
 #define MAX_NUM_OF_SHEEPS (5) // Maksimalan moguc broj ovaca 
 
-#define NOT_TO_CHECK (0) //TODO Ne proverava se kolizija sa i-tom kuglom u nizu
-#define TO_CHECK (1)    //TODO Proverava se kolizija sa i-tom kuglom u nizu
+#define NOT_TO_CHECK (0) // TODO Ako se utvrdi kolizija i-te ovce(kugle), nije potrebno azurirati smer njene brzine.
+#define TO_CHECK (1)    //TODO  Ako se utvrdi kolizija i-te ovce(kugle), azurira se njena brzina.
 
 //Dimenzje livade i poluprecnik kugle (u svetskom koordinatnom sistemu)
 #define MEADOWDIMENSION_X (5.0)
 #define MEADOWDIMENSION_Y (0.25) 
 #define MEADOWDIMENSION_Z (10.0) 
 #define RADIUS (0.5)
+
+#define MAX_POSSIBLE_CLOSED_SURFACES (200) //Pretpostavljamo da ne moze biti prevelik broj pravougaonika u okviru zatvorene povrsi
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
@@ -25,16 +27,23 @@ typedef struct {
                      // Ipak, umesto da cuvamo informacije o ukupnoj brzini, mi pamtimo obe komponente brzine
                      // jer su funkcije sin i cos vremenski skupe da bi se svaki put racunale.
     angle,w_angle;  // Tekuci ugao rotacije i ugaona brzina kotrljanja kugle
-} BALL;
+} BALL;  //Struktura u kojoj cuvamo informacije o ovcama(ili kuglama). Polje angle ima razlicito znacenje kod ove dve implementacije:
+// Kod kugle ona predstavlja ugao za koji je zarotirana kugle, dok kod ovaca ona predstavlja ugao sinusa koji odredjuje njenu
+// y-koordinatu (tj. koliko je ovcica 'poskocila' u vazduhu)
 
 typedef struct {
     float pX, pY, pZ, v;
-} CLOSER;
+} CLOSER; // TODO Struktura u kojoj cuvamo informacije o objektu koji zatvara ovce.
 
 
 typedef struct {
     float pX,pZ;
-} POINT;
+} POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
+
+typedef struct {
+    float minX, minZ, maxX, minZ;
+} SURFACE; // Struktura u za cuvanje minimalnih i maksimalnih x i z koordinata u okviru pravougaonog dela
+           // zatvorene povrsi
 
 void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije
