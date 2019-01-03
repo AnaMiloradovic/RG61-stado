@@ -370,7 +370,42 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
         // sve ovce nalaze sa leve ili sa desne strane prvog segmenta putanje(zapravo i same pocetne tacke). Takodje, trebalo bi
         // da proverimo i da li se sve one nalaze (ovde) iznad drugog segmenta ove putanje (zapravo da li su njihove z-koordinate
         // manje od z-koordinate prelomne tacke, jer ako nisu svima, onda ih ova putanja sigurno ne moze pravilno zatvoriti. Kad i to ispitamo,
-        // ostaje nam da proverimo
+        // ostaje nam da proverimo da li se putanja zavrsava sa iste strane prvog segmenta sa koje su i tacke, ako da, putanja zatvara tacke.
+           int indicator=1; //Prvo proveravamo da li su sve ovce sa leve strane prvog segmenta(zapravo, prve tacke ove putanje)
+           for(int i=0;i<NumOfSheeps;i++)
+               if(Balls[i].pX > firstPointX)
+               {
+                   indicator = 0;
+                   break;
+               }
+           if(indicator && Closer.pX == maxX)  //Ako se sve ovce nalaze sa leve strane, a poslednja tacka putanje sa desne, onda ovo nije zatvarajuca putanja
+               return;
+           for(int i=0;i<NumOfSheeps;i++) //Sada proveravamo da nisu sve sa desne strane, ako se za bilo koju ispostavi da nije, tu mozemo da zavrsimo svako razmatranje
+               if(Balls[i].pX < firstPointX)
+                   return;
+           if(Closer.pX == minX)
+               return;
+           //Sada nam jos ostaje da proverimo da li su sve tacke(ovde) iznad prelomne tacke
+           for(int i=0;i<NumOfSheeps;i++)
+               if(Balls[i].pZ < turningPoints[1].pZ)
+                   return;
+           //Ako smo dosli do ovde, imamo zatvarajucu putanju :) Jos sada da azuriramo povrsine i procenat :D
+
+           if(indicator) //Sve su ovce sa leve strane
+           {
+               ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {firstPointX,minZ,maxX,turningPoints[1].pZ};
+               PercentOfCoveredField += ((maxX-firstPointX)*(turningPoints[1].pZ- minZ)/4)*100;
+
+               ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {turningPoints[1].pX,turningPoints[1].pZ,maxX,maxZ};
+               PercentOfCoveredField += ((maxX-turningPoints[1].pX)*(maxZ-turningPoints[1].pZ)/4)*100;
+
+               ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, Closer.pZ, turningPoints[1].pX, maxZ};
+               PercentOfCoveredField += ((turningPoints[1].pX-minX)*(maxZ-Closer.pZ)/4)*100;
+
+               maxX = firstPointX;
+               maxZ = turningPoints[1].pZ;
+               return;
+           }
 
         }
     }
