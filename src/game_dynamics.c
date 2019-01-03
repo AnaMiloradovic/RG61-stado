@@ -303,6 +303,7 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
              ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, firstPointZ, maxX, maxZ};
 
              PercentOfCoveredField += ((maxZ - firstPointZ)*(maxX - minX)/4)*100;  //4 je ukupna povrsina terena(koji je ovde skaliran na dimenzije 2x2)
+             printf("  Procenat: %f \n",PercentOfCoveredField);
              maxZ = firstPointZ;
              return; //Obradili smo zatvaranje, mozemo van
          }
@@ -318,6 +319,7 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
              ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, minZ, maxX, firstPointZ};
 
              PercentOfCoveredField += ((firstPointZ - minZ)*(maxX - minX)/4)*100;
+             printf("  Procenat: %f \n",PercentOfCoveredField);
              minZ = firstPointZ;
              return;
          }
@@ -338,9 +340,10 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
             {
                 ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {firstPointX, minZ, maxX, maxZ};
 
-                PercentOfCoveredField += ((maxZ - minZ)*(maxX - firstPointZ)/4)*100;
+                PercentOfCoveredField += ((maxZ - minZ)*(maxX - firstPointX)/4.0)*100;
                 maxX = firstPointX;
                 printf("Prekrivena povrsina");
+                printf("  Procenat: %f \n",PercentOfCoveredField);
                 return; //Obradili smo zatvaranje, mozemo van
             }
             else // Proveravamo mozemo li zatvoriti levi deo terena
@@ -352,15 +355,24 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
                 printf("Prekrivena povrsina");
                 ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, minZ, firstPointX, maxZ};
 
-                PercentOfCoveredField += ((maxZ - minZ)*(firstPointZ - minX)/4)*100;
+                PercentOfCoveredField += ((maxZ - minZ)*(firstPointX - minX)/4)*100;
+                printf("  Procenat: %f \n",PercentOfCoveredField);
                 minX = firstPointX;
                 return;
             }
         }
     }
-    /*else if(numOfTurningPoints == 1)
+    else if(numOfTurningPoints == 1)
     {
+        // Ponovo cemo ispitivati sa koje ivice je pocetna tacka
+        if(firstPointZ == minZ)
+        {// Dakle, prvi deo izlomljene putanje je duz z-ose, od vrha ka dole. Treba prvo da odredimo da li se eventualno
+        // sve ovce nalaze sa leve ili sa desne strane prvog segmenta putanje(zapravo i same pocetne tacke). Takodje, trebalo bi
+        // da proverimo i da li se sve one nalaze (ovde) iznad drugog segmenta ove putanje (zapravo da li su njihove z-koordinate
+        // manje od z-koordinate prelomne tacke, jer ako nisu svima, onda ih ova putanja sigurno ne moze pravilno zatvoriti. Kad i to ispitamo,
+        // ostaje nam da proverimo
 
-    }*/
+        }
+    }
 
 }
