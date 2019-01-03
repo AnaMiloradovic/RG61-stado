@@ -75,7 +75,8 @@ void onDisplayFunction()
     
     if(closing)
         tryToClose();
-    
+
+    drawClosedSurfaces();
     glPopMatrix();
     if(on_going)
     {

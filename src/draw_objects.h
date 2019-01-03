@@ -16,5 +16,6 @@ void drawSheeps();             // Iscrtavanje svih ovaca
 void drawClouds();             //Crtanje oblaka
 void drawCloser();             // Crtanje objekta iznad livade koji ce zatvarati ovce
                               // TODO: Zameni ih nekim lepsim 3D, za sad ce biti obican valjak
+void drawClosedSurfaces();    //Funkcija koja crta delove terena koji su zatvoreni u igri
 void jumping(int timer_id);
 #endif

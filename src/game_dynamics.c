@@ -20,7 +20,9 @@ int on_going = 1;
 int closing = 0;
 unsigned char moving;
 extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
-extern int NumOf
+extern int NumOfClosedSurfaces;
+
+extern float PercentOfCoveredField;
 void rollingBalls(int timer_id)
 {
     if(timer_id != TIMER_ID_ROLLING)
@@ -117,7 +119,7 @@ void tryToClose()
         return;
     }
     
-    if(moving == ' ')
+    if(currentMoving == ' ')
     {
         currentMoving = moving;
         return;
@@ -259,7 +261,7 @@ void tryToClose()
     if(!isBegin  && ((numOfTurningPoints == 3 && turningPoints[0].pX == Closer.pX && turningPoints[0].pZ == Closer.pZ ) || fabs(Closer.pX - maxX) < EPSILON || fabs(Closer.pX - minX) < EPSILON
         || fabs(Closer.pZ - maxZ) < EPSILON || fabs(Closer.pZ - minZ) < EPSILON) )
     {
-        //checkToClosedSurface(turningPoints,numOfTurningPoints);
+        checkToClosedSurface(turningPoints,numOfTurningPoints);
         printf("KRAJ ISCRTAVANJA, USPESNO!\n");
         isBegin = 1;
         numOfTurningPoints=0;
@@ -271,5 +273,94 @@ void tryToClose()
 
 void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
 {
-    
+    float firstPointX = turningPoints[0].pX, firstPointZ = turningPoints[0].pZ; // Koordinate prve tacke na putanji
+    if(numOfTurningPoints != 3 && firstPointX != minX && firstPointX!= maxX &&
+           firstPointZ != minZ && firstPointZ != maxZ) // Iskljucujemo sve putanje koje ne pocinju od neke ivice,
+        // osim ako broj prelomnih tacaka nije 3(jer onda postoji mogucnost da je igrac bio dovoljno vest i sposoban
+        // da opise netaknuti pravougaonik oko svih ovaca
+        return;
+    // Dalje, sada ispitujemo sa koje ivice krece putanja, i u zavisnosti
+    if(numOfTurningPoints == 0) //Prvo ispitujemo da nije obicna pravolinijska putanja koja samo treba da dodje do drugog kraja terena
+    {
+        if( (firstPointX == minX && fabs(Closer.pX - maxX) < EPSILON) ||
+                (firstPointX == maxX && fabs(Closer.pX - minX) < EPSILON) )
+        {// Valjak je uspesno presao sa levog na desni kraj terena. Sada treba da vidimo da li je pri tom eventualno zatvoren gornji
+            // ili donji deo terena (tj. da bi se neki od njih uspesno zatvorio, na njemu u trenutku kraja iscrtavanja putanje ne sme da bude nijedna ovca)
+            int indicator = 1;
+         for(int i=0;i<NumOfSheeps;i++)  //Proveravamo prvo donji deo terena, ispod nacrtane prave
+         {
+             if(Balls[i].pZ > firstPointZ)
+             {
+                 indicator = 0; //Ovca je, dakle, u donjem delu terena, znaci ne mozemo ga zatvoriti
+                 break;
+             }
+         }
+         if(indicator) // Nije do sad negiran indikator, znaci da dole nema ovaca, znaci donji deo terena zatvaramo
+         {
+             // Dodajemo novi zatvoreni pravougaonik u nas niz, azuriramo zatvoreni procenat terena, i na kraju azuriramo
+             // informaciju o maksimalnoj z- koordinati koja je ovcama i dalje slobodna
+             printf("Prekrivena povrsina");
+             ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, firstPointZ, maxX, maxZ};
+
+             PercentOfCoveredField += ((maxZ - firstPointZ)*(maxX - minX)/4)*100;  //4 je ukupna povrsina terena(koji je ovde skaliran na dimenzije 2x2)
+             maxZ = firstPointZ;
+             return; //Obradili smo zatvaranje, mozemo van
+         }
+         else //Ok, sada proveravamo gornji deo terena. Ako na njemu nema ovaca, dalja obrada je analogna, samo sto sada radimo sa minimalnom z koordinatom.
+             //Provera je neophodna, jer se opet moze dogoditi da je igrac uspesno iscrtao pravu liniju, ali sa obe strane se nalaze ovce,
+             // tada ne moze nista zagraditi.
+         {
+             for(int i=0;i<NumOfSheeps;i++)
+                 if(Balls[i].pZ < firstPointZ)
+                     return; //Mozemo u slucaju da se bar jedna ovca nalazi sa gornje strane da odmah izadjemo iz funkcije, posto je donja strana vec ispitana
+             // Ako smo nakon petlje dosli do ove tacke, to znaci da sa gornje strane nema nijedne ovce, i da nju treba zagraditi.
+             printf("Prekrivena povrsina");
+             ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, minZ, maxX, firstPointZ};
+
+             PercentOfCoveredField += ((firstPointZ - minZ)*(maxX - minX)/4)*100;
+             minZ = firstPointZ;
+             return;
+         }
+        }
+        // Analogno sada sve obrade i ispitivanja vrsimo kada je valjak presao uzduz terena
+        else
+        {
+            int indicator = 1;
+            for(int i=0;i<NumOfSheeps;i++)  //Proveravamo desni deo terna
+            {
+                if(Balls[i].pX > firstPointX)
+                {
+                    indicator = 0;
+                    break;
+                }
+            }
+            if(indicator) // Mozemo da zatvorimo desni deo terena
+            {
+                ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {firstPointX, minZ, maxX, maxZ};
+
+                PercentOfCoveredField += ((maxZ - minZ)*(maxX - firstPointZ)/4)*100;
+                maxX = firstPointX;
+                printf("Prekrivena povrsina");
+                return; //Obradili smo zatvaranje, mozemo van
+            }
+            else // Proveravamo mozemo li zatvoriti levi deo terena
+            {
+                for(int i=0;i<NumOfSheeps;i++)
+                    if(Balls[i].pX < firstPointX)
+                        return; //Mozemo u slucaju da se bar jedna ovca nalazi sa leve strane da odmah izadjemo
+                // Ako smo uspeli da dodjemo do ovde, zagradjujemo levu stranu
+                printf("Prekrivena povrsina");
+                ClosedSurfaces[NumOfClosedSurfaces++] = (SURFACE) {minX, minZ, firstPointX, maxZ};
+
+                PercentOfCoveredField += ((maxZ - minZ)*(firstPointZ - minX)/4)*100;
+                minX = firstPointX;
+                return;
+            }
+        }
+    }
+    /*else if(numOfTurningPoints == 1)
+    {
+
+    }*/
+
 }

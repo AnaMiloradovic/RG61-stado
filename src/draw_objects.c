@@ -13,6 +13,8 @@
 
 extern BALL Balls[];
 extern CLOSER Closer;
+extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
+extern int NumOfClosedSurfaces;
 extern int NumOfSheeps, Level;
 extern int on_going;
 
@@ -169,6 +171,21 @@ void drawCloser()
     glEnd();
     glPopMatrix();
 }
+
+void drawClosedSurfaces()
+{
+    setMeadowMaterial();
+    for(int i=0;i<NumOfClosedSurfaces;i++) {
+        glPushMatrix();
+           glTranslatef((ClosedSurfaces[i].maxX + ClosedSurfaces[i].minX)/2,1,(ClosedSurfaces[i].maxZ + ClosedSurfaces[i].minZ)/2);
+           glScalef(ClosedSurfaces[i].maxX - ClosedSurfaces[i].minX,0.75*(1.0/MEADOWDIMENSION_Y),ClosedSurfaces[i].maxZ - ClosedSurfaces[i].minZ);
+           glutSolidCube(1);
+        glPopMatrix();
+    }
+}
+
+
+
 
 void jumping(int timer_id)
 {

@@ -41,7 +41,7 @@ typedef struct {
 } POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
 
 typedef struct {
-    float minX, minZ, maxX, minZ;
+    float minX, minZ, maxX, maxZ;
 } SURFACE; // Struktura u za cuvanje minimalnih i maksimalnih x i z koordinata u okviru pravougaonog dela
            // zatvorene povrsi
 
