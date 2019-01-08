@@ -182,8 +182,8 @@ void tryToClose()
     
     glBegin(GL_LINE_STRIP);
        for(int i=0;i<=numOfTurningPoints;i++)
-           glVertex3f(turningPoints[i].pX,1,turningPoints[i].pZ);
-       glVertex3f(Closer.pX,1,Closer.pZ);
+           glVertex3f(turningPoints[i].pX,1.1,turningPoints[i].pZ);
+       glVertex3f(Closer.pX,1.1,Closer.pZ);
     glEnd();
     glDisable(GL_LINE_STIPPLE);
     glEnable(GL_LIGHT0);

@@ -49,7 +49,10 @@ void onDisplayFunction()
 
     glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
     glLoadIdentity();        // Cistimo matricu od prethodnog smeca.
-    gluLookAt(0,5,13,0,0,0,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
+    if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
+        gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
+    else
+    gluLookAt(0,5,13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 
     setMeadowMaterial(); // Postavljamo materijal na livadu
     glPushMatrix(); // Iscrtavamo livadu(glavni teren) gde ce nam trcati ovce.
