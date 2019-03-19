@@ -18,7 +18,7 @@ void onReshapeFunction(int w, int h)
     height=h;
     glViewport(0,0,width,height);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();             //Cistimo matricu od prethodnog smeca.
+    glLoadIdentity();
 
     gluPerspective(90,(float) width/height,1,40); //Podesavamo projekciju
 }
@@ -35,75 +35,34 @@ void onKeyboardFunction(unsigned char key, int x, int y)
             if(on_going)
                 glutPostRedisplay();
             break;
-        /* HACK:
-
-            case 'j':
-            Closer.pX -= Closer.v;
-            if(Closer.pX < -1)
-                Closer.pX = -1;
-            if(closing)
-            {
-                moving = key;
-            }
-            break;
-        case 'k':
-            Closer.pZ += Closer.v;
-            if(Closer.pZ > 1)
-                Closer.pZ = 1;
-            if(closing)
-            {
-                moving = key;
-            }
-            break;
-        case 'l':
-            Closer.pX += Closer.v;
-            if(Closer.pX > 1)
-                Closer.pX = 1;
-            if(closing)
-            {
-                moving = key;
-            }
-            break;
-        case 'i':
-            Closer.pZ -= Closer.v;
-            if(Closer.pZ < -1)
-                Closer.pZ = -1;
-            if(closing)
-            {
-                moving = key;
-            }
-            break;
-        case ' ':
-            moving = ' ';
-            if(!closing)
-                tryToClose();
-            break;
-            */
+            /* TODO: Dugme na tastaturi kojim 'pucamo' povrsinu koju zatvaramo */
     }
 }
 
-/* TODO: Popravi brzinu valjka */
 void onKeyboardSpecialFunc(int key, int x, int y) {
+    glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
     switch(key)
     {
         case GLUT_KEY_UP:
-            Closer.pZ -= Closer.v;
+            Closer.pZ -= Closer.vZ;
             if(Closer.pZ < -1)
                 Closer.pZ = -1;
             break;
         case GLUT_KEY_DOWN:
-            Closer.pZ += Closer.v;
+            Closer.pZ += Closer.vZ;
             if(Closer.pZ > 1)
                Closer.pZ = 1;
             break;
         case GLUT_KEY_LEFT:
-            Closer.pX -= Closer.v;
+            Closer.pX -= Closer.vX;
             if(Closer.pX < -1)
                Closer.pX = -1;
              break;
         case GLUT_KEY_RIGHT:
-            Closer.pX += Closer.v;
+            Closer.pX += Closer.vX;
             if(Closer.pX > 1)
                 Closer.pX = 1;
+            break;
+
     }
 }

@@ -19,10 +19,10 @@ extern float minX,maxX,minZ,maxZ;
 int on_going = 1;
 /* int closing = 0;  */
 unsigned char moving;
-/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES]; */
-/* HACK: extern int NumOfClosedSurfaces;  */
+/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
+   HACK: extern int NumOfClosedSurfaces;
 
-/* HACK: extern float PercentOfCoveredField;  */
+   HACK: extern float PercentOfCoveredField;  */
 void rollingBalls(int timer_id)
 {
     if(timer_id != TIMER_ID_ROLLING)

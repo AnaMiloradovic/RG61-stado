@@ -36,6 +36,7 @@ void addSphereBodySymetric(float x, float y, float z)
     glPopMatrix();
 }
 
+/* TODO: Implementirati rotaciju nogu. */
 void drawLeg(float posX,float posZ, float backLeg, float oppositeSide)
 {
      setSkinMaterial();

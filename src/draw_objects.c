@@ -13,52 +13,57 @@
 
 extern BALL Balls[];
 extern CLOSER Closer;
-/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  */
-/* HACK: extern int NumOfClosedSurfaces;   */
-extern int NumOfSheeps, Level;
+/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
+ HACK: extern int NumOfClosedSurfaces;   */
+extern int NumOfSheeps, Level, ifJustSheeps;
 extern int on_going;
+
+/*--- Jedinice u svetskom koordinatnom sistemu */
+extern double GlobalXSize;
+extern double GlobalYSize;
+extern double GlobalZSize;
+/*---   */
+
 
 void drawMeadow()
 {
     glScalef(MEADOWDIMENSION_X, MEADOWDIMENSION_Y, MEADOWDIMENSION_Z);
     glutSolidCube(2);
 
-    // Iscrtavamo ivice duz terena (i duz z-ose)
     glPushMatrix();
-    glScalef(0.5/MEADOWDIMENSION_X,1/MEADOWDIMENSION_Y,(1+0.5/MEADOWDIMENSION_Z)*2);
-    //Crtamo sada svaku ivicu ponaosob od njih
-    glPushMatrix();
-    glTranslatef(MEADOWDIMENSION_X/0.5+0.5,0,0);
+    glTranslatef(1 + 0.5 * 0.5*GlobalXSize,0,0); /*TODO: Da se iskomentarise*/
+    glScalef(0.5 * GlobalXSize,1 * GlobalYSize, 2 * (1 + 0.5*GlobalZSize) );
     glutSolidCube(1);
     glPopMatrix();
+
     glPushMatrix();
-    glTranslatef(-(MEADOWDIMENSION_X/0.5 + 0.5),0,0);
+    glTranslatef(- 1 - 0.5 * 0.5*GlobalXSize,0,0); /*TODO: Da se iskomentarise*/
+    glScalef(0.5 * GlobalXSize, GlobalYSize , 2 * (1 + 0.5*GlobalZSize) );
     glutSolidCube(1);
     glPopMatrix();
-    glPopMatrix();
-    // Ivice po sirini terena (formalnije objasnjeno, duz x-ose)
+
     glPushMatrix();
-    glScalef(2*(1 + 0.5/MEADOWDIMENSION_X),4,0.5/10);
-    //Crtamo sada svaku ivicu ponaosob od njih
-    glPushMatrix();
-    glTranslatef(0,0,MEADOWDIMENSION_Z/0.5+0.5);
+    glTranslatef(0,0,1 + 0.5 * 0.5*GlobalZSize); /*TODO: Da se iskomentarise*/
+    glScalef(2 * (1 + 0.5 * GlobalXSize), GlobalYSize , 0.5 * GlobalZSize);
     glutSolidCube(1);
     glPopMatrix();
+
     glPushMatrix();
-    glTranslatef(0,0,-(MEADOWDIMENSION_Z/0.5 + 0.5));
+    glTranslatef(0,0, - 1 - 0.5 * 0.5 * GlobalZSize); /*TODO: Da se iskomentarise*/
+    glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
     glutSolidCube(1);
-    glPopMatrix();
     glPopMatrix();
 }
-
+/*
 void drawBalls()
 {
     int i;
+    double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y);
     setBallMaterial(); // Postavljamo materijal na kugle
     for(i=0;i< NumOfSheeps;i++)
     {
        glPushMatrix();
-       glTranslatef(Balls[i].pX,1+ ((float)RADIUS/MEADOWDIMENSION_Y),Balls[i].pZ);
+       glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
        glScalef(RADIUS/MEADOWDIMENSION_X,2,RADIUS/MEADOWDIMENSION_Z);
        glRotatef(Balls[i].angle,1,0,0);
        glutSolidSphere(1,20,20);
@@ -76,6 +81,7 @@ void drawSheeps()
         drawSheep(Balls[i].angle/180*PI);
         glPopMatrix();
     }
+    */
 
     /* HACK:
     if(on_going)
@@ -85,8 +91,36 @@ void drawSheeps()
        glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
     }
      */
+
+
+
+void drawObjects()
+{
+    int i;
+    double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y);
+    for(i=0;i< NumOfSheeps;i++)
+    {
+        if(ifJustSheeps)
+        {
+            glPushMatrix();
+            glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
+            glScalef(GlobalXSize,GlobalYSize,GlobalZSize);
+            drawSheep(Balls[i].angle/180*PI);
+            glPopMatrix();
+        } else
+        {
+            setBallMaterial(); // Postavljamo materijal na kugle
+            glPushMatrix();
+            glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
+            glScalef(RADIUS * GlobalXSize,2, RADIUS * GlobalZSize);
+            glRotatef(Balls[i].angle,1,0,0);
+            glutSolidSphere(1,20,20);
+            glPopMatrix();
+        }
+    }
 }
 
+/*
 void drawClouds()
 {
     glPointSize(1.5);
@@ -146,23 +180,34 @@ void drawClouds()
     glLineWidth(1);
     glEnable(GL_LIGHTING);
 }
+*/
+
+
 
 void drawCloser()
 {
     glPushMatrix();
     glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
-    glScalef(0.5*((float) 1/MEADOWDIMENSION_X),(float)1/MEADOWDIMENSION_Y,0.5*((float) 1/MEADOWDIMENSION_Z));
+    glScalef(0.5*GlobalXSize,GlobalYSize,0.5*GlobalZSize);
+    drawCylinder();
+
+    glPopMatrix();
+}
+
+
+static void drawCylinder()
+{
     float h,u;
     glBegin(GL_TRIANGLE_FAN);
     glNormal3f(0,1,0);
     glVertex3f(0,1,0);
     for(u=0;u<=2*PI;u+= PI/20)
-           {
-               glVertex3f(cos(u),1,sin(u));
-               glVertex3f(cos(u+PI/20),1,sin(u+PI/20));
-           }
+    {
+        glVertex3f(cos(u),1,sin(u));
+        glVertex3f(cos(u+PI/20),1,sin(u+PI/20));
+    }
     glEnd();
-    
+
     glBegin(GL_TRIANGLE_STRIP);
     for(h=1-PI/20;h>-1-EPSILON;h-=PI/20)
         for(u=0;u<=2*PI+ EPSILON;u+=PI/20)
@@ -172,7 +217,6 @@ void drawCloser()
             glVertex3f(cos(u),h+PI/20,sin(u));
         }
     glEnd();
-    glPopMatrix();
 }
 
 /* HACK:

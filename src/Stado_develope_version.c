@@ -21,8 +21,10 @@ extern char Name[];
 extern int NumOfSheeps, Level;
 extern float minX,maxX,minZ,maxZ;
 extern int on_going;
-/* HACK: extern int closing;   */
-/* HACK: extern unsigned char moving;   */
+
+/*
+ * HACK: extern int closing;
+ * HACK: extern unsigned char moving;   */
 
 int main(int argc, char* argv[])
 {
@@ -43,12 +45,14 @@ void onDisplayFunction()
     glEnable(GL_LIGHTING); //Postavljamo osvetljenje
     glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE);
+    /*
     //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
-    drawClouds();
+    //drawClouds();
+     */
     setSunLight();
 
     glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
-    glLoadIdentity();        // Cistimo matricu od prethodnog smeca.
+    glLoadIdentity();
     if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
         gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
     else
@@ -60,7 +64,8 @@ void onDisplayFunction()
                                                                 // vezan za teren.
     
     initialPos();   // Inicijalizujemo pocetne pozicije kugli
-    
+    drawObjects();
+    /*
     if(ifJustSheeps)
         drawSheeps();
     
@@ -70,7 +75,7 @@ void onDisplayFunction()
     drawBalls();   // Iscrtavamo kugle
     glPopMatrix();
     }
-    
+    */
     glPushMatrix();
     setCloserMaterial(); 
     drawCloser();  // Iscrtavamo valjak

@@ -11,11 +11,13 @@
 #define TIMER_ID_JUMPING (1)
 
 void drawMeadow();              // Iscrtavanje livade
-void drawBalls();              //Iscrtavanje kugli
-void drawSheeps();             // Iscrtavanje svih ovaca
-void drawClouds();             //Crtanje oblaka
+/*void drawBalls();              //Iscrtavanje kugli
+void drawSheeps();             // Iscrtavanje svih ovaca*/
+void drawObjects();
+/*void drawClouds();             //Crtanje oblaka*/
 void drawCloser();             // Crtanje objekta iznad livade koji ce zatvarati ovce
-                              // TODO: Zameni ih nekim lepsim 3D, za sad ce biti obican valjak
+   static void drawCylinder();    // Podprocedura za parametrizaciju valjka, i mozemo samo u okviru ovog modula da je koristimo
+// TODO: Zameni ih nekim lepsim 3D, za sad ce biti obican valjak
 /* HACK: void drawClosedSurfaces();    //Funkcija koja crta delove terena koji su zatvoreni u igri  */
 /* HACK: void jumping(int timer_id);    */
 #endif

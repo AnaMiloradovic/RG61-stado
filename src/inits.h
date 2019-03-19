@@ -36,7 +36,7 @@ typedef struct {
 // y-koordinatu (tj. koliko je ovcica 'poskocila' u vazduhu)
 
 typedef struct {
-    float pX, pY, pZ, v;
+    float pX, pY, pZ, vX, vZ;
 } CLOSER; // TODO Struktura u kojoj cuvamo informacije o objektu koji zatvara ovce.
 
 

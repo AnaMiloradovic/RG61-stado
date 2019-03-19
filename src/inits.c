@@ -13,15 +13,26 @@ char Name[]= "Stado - sacuvaj sve ovce! 🐑";  //Naslov prozora - i ime igre :)
 int ifJustSheeps = 1;
 int NumOfSheeps, Level;
 float minX,maxX,minZ,maxZ;
+int closedSurfacesLX=0, closedSurfacesRX =0, closedSurfacesUZ=0, closedSurfacesDZ =0;  /* TODO: Broj 'jedinicnih povrsina' koje ogranicavaju ovce, redom, sleva, sdesna, s gornje strane i s donje strane.*/
+int points = 0;   /* TODO: Bodovi i procenat zatvorene povrsine*/
+int closedPercentOfMeadow = 0;
 BALL Balls[MAX_NUM_OF_SHEEPS];
 CLOSER Closer;
-/* HACK:  SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  //Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri   */
-// Azurirace se svaki put ako igrac uspe da zatvori odredjeni deo slobodne povrsine, a neophodan je zbog iscrtavanja zatvorenih delova porvsine
-/* HACK: int NumOfClosedSurfaces = 0; //Broj delova uspesno zatvorene povrsine    */
 
+
+/* --- Konstante koje su tu samo radi citljivosti i mini-optimizacije, da se ne racunaju stalno */
+const double GlobalXSize = 1.0/MEADOWDIMENSION_X;
+const double GlobalYSize = 1.0/MEADOWDIMENSION_Y;
+const double GlobalZSize = 1.0/MEADOWDIMENSION_Z;
+/* --- */
+
+/* HACK:  SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri
+ Azurirace se svaki put ako igrac uspe da zatvori odredjeni deo slobodne povrsine, a neophodan je zbog iscrtavanja zatvorenih delova porvsine
+   HACK: int NumOfClosedSurfaces = 0; Broj delova uspesno zatvorene povrsine
+*/
 
 /* HACK
-//TODO (Da se mozda i doradi) Informacije neophodne za samu igru -----
+//(Da se mozda i doradi) Informacije neophodne za samu igru -----
 float PercentOfCoveredField = 0; //Procenat uspesno zatvorene povrsine (kada se dodje do trazenog procenta, u zavisnosti od broja ovaca, igrac je pobedio)
 float PercentNeedForWin;          // Neophodan procenat za pobedu (utvrdjuje se na pocetku igre, kada se ucitaju nivo i broj ovaca)
 // -----
@@ -63,6 +74,7 @@ void initialPos()
     srand(time(NULL)); //Inicijalizujemo nas random generator
     int i;  
     float v; // Ukupna brzina kretanja kugle(bice ista za sve)
+    /* TODO: Srediti brzine! */
     switch(Level)
     {
         case 1:
@@ -89,9 +101,9 @@ void initialPos()
 
     for(i=0;i<NumOfSheeps;i++)
     {
-       // Ovakvim racunanjem se obezbedjujemo da sigurno ne dodje do kolizije pri inicijalnom iscrtavanju kugli
-       Balls[i].pX = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_X - 1))+(-RADIUS/MEADOWDIMENSION_X+1+((float)i/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_X-1)));  
-       Balls[i].pZ = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_Z - 1))+(-RADIUS/MEADOWDIMENSION_Z+1+((float)i/NumOfSheeps)*(2*(RADIUS/MEADOWDIMENSION_Z-1)));
+       /* Ovakvim racunanjem se obezbedjujemo da sigurno ne dodje do kolizije pri inicijalnom iscrtavanju objekata  */
+       Balls[i].pX = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(1.0*RADIUS/MEADOWDIMENSION_X - 1))+(-RADIUS*GlobalXSize + 1 + ((float)i/NumOfSheeps)* ( 2 * ( RADIUS * GlobalXSize -1 )));
+       Balls[i].pZ = ((float)rand()/RAND_MAX)*(1.0/NumOfSheeps)*(2*(1.0*RADIUS/MEADOWDIMENSION_Z - 1))+(-1.0*RADIUS/MEADOWDIMENSION_Z+1+((float)i/NumOfSheeps)*(2*(1.0*RADIUS/MEADOWDIMENSION_Z-1)));
        Balls[i].angle = 0;
        if(ifJustSheeps)
        {
@@ -101,13 +113,16 @@ void initialPos()
        Balls[i].vX = v*cos(Balls[i].alfa);
        Balls[i].vZ = v*sin(Balls[i].alfa);
        Balls[i].w_angle = v/RADIUS;
-       if(ifJustSheeps)
-           Balls[i].w_angle = PI/6;
+       /*if(ifJustSheeps)
+           Balls[i].w_angle = PI/6;*/
     }
 
     Closer.pX = 0;
     Closer.pY = 10;
     Closer.pZ = 1;
-    Closer.v  = v;
+
+    Closer.vZ = 1/(float) 50;  /*TODO: Da li prepoloviti brzinu? */
+    Closer.vX = 2 * Closer.vZ;
+
     isCalled =1; //Posle ovoga se vise nece inicijalizovati podaci.
 }
