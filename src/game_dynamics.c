@@ -17,12 +17,12 @@ extern int ifJustSheeps;
 extern int NumOfSheeps;
 extern float minX,maxX,minZ,maxZ;
 int on_going = 1;
-int closing = 0;
+/* int closing = 0;  */
 unsigned char moving;
-extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
-extern int NumOfClosedSurfaces;
+/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES]; */
+/* HACK: extern int NumOfClosedSurfaces;  */
 
-extern float PercentOfCoveredField;
+/* HACK: extern float PercentOfCoveredField;  */
 void rollingBalls(int timer_id)
 {
     if(timer_id != TIMER_ID_ROLLING)
@@ -93,6 +93,7 @@ void colissionDetection()
         }
 }
 
+/* HACK
 void tryToClose()
 {
     static POINT turningPoints[MAX];
@@ -270,7 +271,9 @@ void tryToClose()
         return;
     }
 }
+*/
 
+/* HACK:
 void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
 {
     float firstPointX = turningPoints[0].pX, firstPointZ = turningPoints[0].pZ; // Koordinate prve tacke na putanji
@@ -411,3 +414,4 @@ void checkToClosedSurface(POINT turningPoints[],int numOfTurningPoints)
     }
 
 }
+ */

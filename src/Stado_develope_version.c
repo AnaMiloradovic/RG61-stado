@@ -21,8 +21,8 @@ extern char Name[];
 extern int NumOfSheeps, Level;
 extern float minX,maxX,minZ,maxZ;
 extern int on_going;
-extern int closing;
-extern unsigned char moving;
+/* HACK: extern int closing;   */
+/* HACK: extern unsigned char moving;   */
 
 int main(int argc, char* argv[])
 {
@@ -75,11 +75,17 @@ void onDisplayFunction()
     setCloserMaterial(); 
     drawCloser();  // Iscrtavamo valjak
     glPopMatrix();
-    
+
+    /* HACK:
     if(closing)
         tryToClose();
 
+     */
+
+     /* HACK:
     drawClosedSurfaces();
+      */
+
     glPopMatrix();
     if(on_going)
     {

@@ -15,14 +15,17 @@ int NumOfSheeps, Level;
 float minX,maxX,minZ,maxZ;
 BALL Balls[MAX_NUM_OF_SHEEPS];
 CLOSER Closer;
-SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  //Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri
+/* HACK:  SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  //Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri   */
 // Azurirace se svaki put ako igrac uspe da zatvori odredjeni deo slobodne povrsine, a neophodan je zbog iscrtavanja zatvorenih delova porvsine
-int NumOfClosedSurfaces = 0; //Broj delova uspesno zatvorene povrsine
+/* HACK: int NumOfClosedSurfaces = 0; //Broj delova uspesno zatvorene povrsine    */
 
+
+/* HACK
 //TODO (Da se mozda i doradi) Informacije neophodne za samu igru -----
 float PercentOfCoveredField = 0; //Procenat uspesno zatvorene povrsine (kada se dodje do trazenog procenta, u zavisnosti od broja ovaca, igrac je pobedio)
 float PercentNeedForWin;          // Neophodan procenat za pobedu (utvrdjuje se na pocetku igre, kada se ucitaju nivo i broj ovaca)
 // -----
+ */
 
 void graphicsInitialization()
 {
@@ -32,6 +35,7 @@ void graphicsInitialization()
     glutDisplayFunc(onDisplayFunction);  //Registrujemo callback funkcije
     glutReshapeFunc(onReshapeFunction);
     glutKeyboardFunc(onKeyboardFunction);
+    glutSpecialFunc(onKeyboardSpecialFunc);
     glClearColor(COLOR_SKY_R,COLOR_SKY_G,COLOR_SKY_B,0);  //Boja neba - pre nego sto postavimo osvetljenje
     glEnable(GL_DEPTH_TEST);
     return;

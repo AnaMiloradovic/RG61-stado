@@ -10,7 +10,7 @@
 int width,height;
 extern int on_going;
 extern CLOSER Closer;
-extern int closing;
+/* HACK: extern int closing;  */
 extern unsigned char moving;
 void onReshapeFunction(int w, int h)
 {
@@ -35,7 +35,9 @@ void onKeyboardFunction(unsigned char key, int x, int y)
             if(on_going)
                 glutPostRedisplay();
             break;
-        case 'j':
+        /* HACK:
+
+            case 'j':
             Closer.pX -= Closer.v;
             if(Closer.pX < -1)
                 Closer.pX = -1;
@@ -76,5 +78,32 @@ void onKeyboardFunction(unsigned char key, int x, int y)
             if(!closing)
                 tryToClose();
             break;
+            */
+    }
+}
+
+/* TODO: Popravi brzinu valjka */
+void onKeyboardSpecialFunc(int key, int x, int y) {
+    switch(key)
+    {
+        case GLUT_KEY_UP:
+            Closer.pZ -= Closer.v;
+            if(Closer.pZ < -1)
+                Closer.pZ = -1;
+            break;
+        case GLUT_KEY_DOWN:
+            Closer.pZ += Closer.v;
+            if(Closer.pZ > 1)
+               Closer.pZ = 1;
+            break;
+        case GLUT_KEY_LEFT:
+            Closer.pX -= Closer.v;
+            if(Closer.pX < -1)
+               Closer.pX = -1;
+             break;
+        case GLUT_KEY_RIGHT:
+            Closer.pX += Closer.v;
+            if(Closer.pX > 1)
+                Closer.pX = 1;
     }
 }

@@ -17,7 +17,11 @@
 #define MEADOWDIMENSION_Z (10.0) 
 #define RADIUS (0.5)
 
+
+/* HACK:
 #define MAX_POSSIBLE_CLOSED_SURFACES (200) //Pretpostavljamo da ne moze biti prevelik broj pravougaonika u okviru zatvorene povrsi
+*/
+
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
@@ -40,10 +44,14 @@ typedef struct {
     float pX,pZ;
 } POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
 
+
+/* HACK:
 typedef struct {
     float minX, minZ, maxX, maxZ;
 } SURFACE; // Struktura u za cuvanje minimalnih i maksimalnih x i z koordinata u okviru pravougaonog dela
            // zatvorene povrsi
+*/
+
 
 void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije

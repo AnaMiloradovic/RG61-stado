@@ -13,8 +13,8 @@
 
 extern BALL Balls[];
 extern CLOSER Closer;
-extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
-extern int NumOfClosedSurfaces;
+/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  */
+/* HACK: extern int NumOfClosedSurfaces;   */
 extern int NumOfSheeps, Level;
 extern int on_going;
 
@@ -76,12 +76,15 @@ void drawSheeps()
         drawSheep(Balls[i].angle/180*PI);
         glPopMatrix();
     }
+
+    /* HACK:
     if(on_going)
     {
        glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
        glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
        glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
     }
+     */
 }
 
 void drawClouds()
@@ -172,6 +175,8 @@ void drawCloser()
     glPopMatrix();
 }
 
+/* HACK:
+
 void drawClosedSurfaces()
 {
     setMeadowMaterial();
@@ -201,4 +206,4 @@ void jumping(int timer_id)
     }
     glutPostRedisplay();
 }
-    
+    */
