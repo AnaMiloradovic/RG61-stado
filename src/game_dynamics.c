@@ -18,6 +18,14 @@ extern int NumOfSheeps;
 extern float minX,maxX,minZ,maxZ;
 int on_going = 1;
 /* int closing = 0;  */
+/* **************************************** */
+int hit = 0;
+int hitC = 0;
+int changeD = 0;
+char curDir = 0;
+
+
+/* **************************************** */
 unsigned char moving;
 /* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
    HACK: extern int NumOfClosedSurfaces;
@@ -93,6 +101,54 @@ void colissionDetection()
         }
 }
 
+void drawHitting() /* TODO: Da se popravi da lepse izgleda */
+{
+    glDisable(GL_LIGHTING);
+    glColor3f(1,0,0);
+    glBegin(GL_LINES);
+       glVertex3f(Closer.pX,Closer.pY,Closer.pZ);
+       glVertex3f(Closer.pX, MEADOWDIMENSION_Y + 0.001 , Closer.pZ);
+    glEnd();
+    glEnable(GL_LIGHTING);
+}
+
+void drawHittingPath()
+{
+    static POINT beginPoint; /* Pocetna tacka putanje */
+    static POINT turns[3]; /* Maks 3 skretanja */
+    static int  numberOfTurns = 0,indBegin = 1;
+    int i;
+    if(indBegin)
+    {
+        indBegin = 0;
+        hitC = 1;
+        beginPoint.pX = Closer.pX;
+        beginPoint.pY =1.01;
+        beginPoint.pZ = Closer.pZ;
+        return;
+    }
+    if(changeD)
+    {
+        changeD = 0;
+        turns[numberOfTurns].pX = Closer.pX;
+        turns[numberOfTurns].pY = 1.01;
+        turns[numberOfTurns].pZ = Closer.pZ;
+        numberOfTurns++;
+    }
+
+    glDisable(GL_LIGHTING);
+    glColor3f(1,0,0);
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(5, 0xf0f0);
+    glBegin(GL_LINE_STRIP);
+    glVertex3fv(&beginPoint);
+    for(i=0;i<numberOfTurns;i++)
+       glVertex3fv(turns+i);
+    glVertex3f(Closer.pX,1.01,Closer.pZ);
+    glEnd();
+    glDisable(GL_LINE_STIPPLE);
+    glEnable(GL_LIGHTING);
+}
 /* HACK
 void tryToClose()
 {

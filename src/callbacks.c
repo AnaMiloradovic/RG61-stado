@@ -11,6 +11,9 @@ int width,height;
 extern int on_going;
 extern CLOSER Closer;
 /* HACK: extern int closing;  */
+/* ********************* */
+extern int hit,hitC, changeD;
+extern char curDir;
 extern unsigned char moving;
 void onReshapeFunction(int w, int h)
 {
@@ -35,6 +38,9 @@ void onKeyboardFunction(unsigned char key, int x, int y)
             if(on_going)
                 glutPostRedisplay();
             break;
+        case ' ':
+            hit = 1;
+            break;
             /* TODO: Dugme na tastaturi kojim 'pucamo' povrsinu koju zatvaramo */
     }
 }
@@ -47,21 +53,38 @@ void onKeyboardSpecialFunc(int key, int x, int y) {
             Closer.pZ -= Closer.vZ;
             if(Closer.pZ < -1)
                 Closer.pZ = -1;
+            if(curDir!=0 && curDir != 'u')
+                changeD = 1;
             break;
         case GLUT_KEY_DOWN:
             Closer.pZ += Closer.vZ;
             if(Closer.pZ > 1)
                Closer.pZ = 1;
+            down = 1;
+            if(up | right | left) {
+                up = right = left = 0;
+                changeD = 1;
+            }
             break;
         case GLUT_KEY_LEFT:
             Closer.pX -= Closer.vX;
             if(Closer.pX < -1)
                Closer.pX = -1;
+            left = 1;
+            if(up | right | down) {
+                down = right = up = 0;
+                changeD = 1;
+            }
              break;
         case GLUT_KEY_RIGHT:
             Closer.pX += Closer.vX;
             if(Closer.pX > 1)
                 Closer.pX = 1;
+            right = 1;
+            if(up | down | left) {
+                down = up = left = 0;
+                changeD = 1;
+            }
             break;
 
     }

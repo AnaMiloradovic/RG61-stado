@@ -41,7 +41,7 @@ typedef struct {
 
 
 typedef struct {
-    float pX,pZ;
+    float pX,pY,pZ;
 } POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
 
 

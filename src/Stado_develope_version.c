@@ -21,7 +21,9 @@ extern char Name[];
 extern int NumOfSheeps, Level;
 extern float minX,maxX,minZ,maxZ;
 extern int on_going;
-
+/* ********************* */
+extern int hit,hitC, changeD;
+extern char curDir;
 /*
  * HACK: extern int closing;
  * HACK: extern unsigned char moving;   */
@@ -90,8 +92,13 @@ void onDisplayFunction()
      /* HACK:
     drawClosedSurfaces();
       */
-
+     if(hit)      /* TODO USLOVI */
+     {
+         drawHitting();
+         drawHittingPath();
+     }
     glPopMatrix();
+
     if(on_going)
     {
        glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
