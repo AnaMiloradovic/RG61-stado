@@ -22,8 +22,9 @@ extern int NumOfSheeps, Level;
 extern float minX,maxX,minZ,maxZ;
 extern int on_going;
 /* ********************* */
-extern int hit,hitC, changeD;
+extern int hit;
 extern char curDir;
+extern int timePast;
 /*
  * HACK: extern int closing;
  * HACK: extern unsigned char moving;   */
@@ -43,6 +44,10 @@ int main(int argc, char* argv[])
 
 void onDisplayFunction()
 {
+    glClearColor(COLOR_SKY_R - (GETTING_DARK_R*timePast),
+                 COLOR_SKY_G - (GETTING_DARK_G*timePast),
+                 COLOR_SKY_B - (GETTING_DARK_B*timePast),0);  //Boja neba - pre nego sto postavimo osvetljenje
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Cistimo sadrzaj prozora
     glEnable(GL_LIGHTING); //Postavljamo osvetljenje
     glEnable(GL_LIGHT0);
@@ -63,8 +68,11 @@ void onDisplayFunction()
     setMeadowMaterial(); // Postavljamo materijal na livadu
     glPushMatrix(); // Iscrtavamo livadu(glavni teren) gde ce nam trcati ovce.
     drawMeadow(); // Ne radimo glPopMatrix(), jer hocemo da nam na dalje koordinatni sistem bude
-                                                                // vezan za teren.
-    
+                 // vezan za teren.
+    glPushMatrix();
+       drawBlocks();
+    glPopMatrix();
+
     initialPos();   // Inicijalizujemo pocetne pozicije kugli
     drawObjects();
     /*
@@ -99,9 +107,16 @@ void onDisplayFunction()
      }
     glPopMatrix();
 
+
+    if(timePast == TIME_OUT)
+    {
+        printf("Isteklo vreme - kraj igre \n");
+        exit(EXIT_SUCCESS);
+    }
     if(on_going)
     {
        glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
+       timePast++;
     }
 
     else

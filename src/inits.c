@@ -18,7 +18,9 @@ int points = 0;   /* TODO: Bodovi i procenat zatvorene povrsine*/
 int closedPercentOfMeadow = 0;
 BALL Balls[MAX_NUM_OF_SHEEPS];
 CLOSER Closer;
-
+unsigned int timePast = 0;
+unsigned int pointsWon = 0;
+float coveredPercent = 0.0;
 
 /* --- Konstante koje su tu samo radi citljivosti i mini-optimizacije, da se ne racunaju stalno */
 const double GlobalXSize = 1.0/MEADOWDIMENSION_X;
@@ -47,8 +49,10 @@ void graphicsInitialization()
     glutReshapeFunc(onReshapeFunction);
     glutKeyboardFunc(onKeyboardFunction);
     glutSpecialFunc(onKeyboardSpecialFunc);
-    glClearColor(COLOR_SKY_R,COLOR_SKY_G,COLOR_SKY_B,0);  //Boja neba - pre nego sto postavimo osvetljenje
-    glEnable(GL_DEPTH_TEST);
+    /*glClearColor(COLOR_SKY_R - (GETTING_DARK_R*timePast),
+                 COLOR_SKY_G - (GETTING_DARK_G*timePast),
+                 COLOR_SKY_B - (GETTING_DARK_B*timePast),0);  //Boja neba - pre nego sto postavimo osvetljenje
+    glEnable(GL_DEPTH_TEST);*/
     return;
 }
 
@@ -117,12 +121,12 @@ void initialPos()
            Balls[i].w_angle = PI/6;*/
     }
 
-    Closer.pX = 0;
+    Closer.pX = 0.0f;
     Closer.pY = 10;
-    Closer.pZ = 1;
+    Closer.pZ = 1.0f;
 
     Closer.vZ = 1/(float) 50;  /*TODO: Da li prepoloviti brzinu? */
-    Closer.vX = 2 * Closer.vZ;
+    Closer.vX = (float) 2 * Closer.vZ;
 
     isCalled =1; //Posle ovoga se vise nece inicijalizovati podaci.
 }

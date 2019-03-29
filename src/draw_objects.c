@@ -17,6 +17,7 @@ extern CLOSER Closer;
  HACK: extern int NumOfClosedSurfaces;   */
 extern int NumOfSheeps, Level, ifJustSheeps;
 extern int on_going;
+extern float minX,maxX,minZ,maxZ;
 
 /*--- Jedinice u svetskom koordinatnom sistemu */
 extern double GlobalXSize;
@@ -118,6 +119,39 @@ void drawObjects()
             glPopMatrix();
         }
     }
+}
+
+void drawBlocks()
+{
+    if(minX == -1 && minZ == -1 &&
+       maxX == 1  && maxZ ==  1)
+        return;
+
+    glTranslatef(0,1.5,0);
+
+    glPushMatrix();
+       glTranslatef(0,0,(1+maxZ) * 0.5);
+       glScalef(2,1,1-maxZ);
+       glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+       glTranslatef(0,0,(-1 + minZ) * 0.5);
+       glScalef(2,1,minZ + 1);
+       glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+       glTranslatef((1-maxX)*0.5,0,0);
+       glScalef((1 - maxX),1,2);
+       glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+       glTranslatef((-1 + minX) * 0.5, 0, 0);
+       glScalef(minX + 1,1,2);
+       glutSolidCube(1);
+    glPopMatrix();
 }
 
 /*

@@ -11,4 +11,7 @@ void colissionDetection();     // Funkcija za detekciju sudara
 /* HACK: void checkToClosedSurface(POINT turningPoints[], int numOfTurningPoints);  // Funkcija pomocu koje registrujemo eventualne  */
 void drawHitting();                                                                     // nove zatvorene delove povrsine
 void drawHittingPath();
+int stepTest(POINT beginPoint, POINT* turns, int length);
+static int checkBetween(POINT p1, POINT p2, BALL pb);
+void testForNewPoints(POINT beginPoint, POINT* turns, int length);
 #endif
