@@ -130,19 +130,19 @@ void drawBlocks()
     glTranslatef(0,1.5,0);
 
     glPushMatrix();
-       glTranslatef(0,0,(1+maxZ) * 0.5);
+       glTranslatef(0,0,(1.0+maxZ) * 0.5);
        glScalef(2,1,1-maxZ);
        glutSolidCube(1);
     glPopMatrix();
 
     glPushMatrix();
-       glTranslatef(0,0,(-1 + minZ) * 0.5);
+       glTranslatef(0,0,(-1.0 + minZ) * 0.5);
        glScalef(2,1,minZ + 1);
        glutSolidCube(1);
     glPopMatrix();
 
     glPushMatrix();
-       glTranslatef((1-maxX)*0.5,0,0);
+       glTranslatef((1 + maxX)*0.5,0,0);
        glScalef((1 - maxX),1,2);
        glutSolidCube(1);
     glPopMatrix();
@@ -252,36 +252,3 @@ static void drawCylinder()
         }
     glEnd();
 }
-
-/* HACK:
-
-void drawClosedSurfaces()
-{
-    setMeadowMaterial();
-    for(int i=0;i<NumOfClosedSurfaces;i++) {
-        glPushMatrix();
-           glTranslatef((ClosedSurfaces[i].maxX + ClosedSurfaces[i].minX)/2,1,(ClosedSurfaces[i].maxZ + ClosedSurfaces[i].minZ)/2);
-           glScalef(ClosedSurfaces[i].maxX - ClosedSurfaces[i].minX,0.75*(1.0/MEADOWDIMENSION_Y),ClosedSurfaces[i].maxZ - ClosedSurfaces[i].minZ);
-           glutSolidCube(1);
-        glPopMatrix();
-    }
-}
-
-
-
-
-void jumping(int timer_id)
-{
-    if(timer_id != TIMER_ID_JUMPING)
-        return;
-    for(int i=0;i<NumOfSheeps;i++)
-    {
-        Balls[i].angle += Balls[i].w_angle;
-    if(Balls[i].angle > 360)
-        Balls[i].angle -= 360;
-    else if(Balls[i].angle < 360)
-        Balls[i].angle += 360;
-    }
-    glutPostRedisplay();
-}
-    */

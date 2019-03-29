@@ -16,17 +16,7 @@
 #define MEADOWDIMENSION_Y (0.25) 
 #define MEADOWDIMENSION_Z (10.0) 
 #define RADIUS (0.5)
-#define TIME_OUT (10*50) /* TODO Moguce da ovde malo kasni zbog virtuelne masine itd */
-
-/* TODO Namesti
-#define GETTING_DARK_R (( (float) COLOR_SKY_R - ((float) 0 / 255)) / (TIME_OUT))
-#define GETTING_DARK_G (( (float) COLOR_SKY_G - ((float) 0.0 / 255)) /  (TIME_OUT))
-#define GETTING_DARK_B (( (float) COLOR_SKY_B - ((float) 153.0 / 255) /  (TIME_OUT))
-
-/* HACK:
-#define MAX_POSSIBLE_CLOSED_SURFACES (200) //Pretpostavljamo da ne moze biti prevelik broj pravougaonika u okviru zatvorene povrsi
-*/
-
+#define TIME_OUT (75*50) /* TODO Moguce da ovde malo kasni zbog virtuelne masine itd */
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
@@ -48,15 +38,6 @@ typedef struct {
 typedef struct {
     float pX,pY,pZ;
 } POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
-
-
-/* HACK:
-typedef struct {
-    float minX, minZ, maxX, maxZ;
-} SURFACE; // Struktura u za cuvanje minimalnih i maksimalnih x i z koordinata u okviru pravougaonog dela
-           // zatvorene povrsi
-*/
-
 
 void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije

@@ -7,5 +7,8 @@
 #define COLOR_SKY_G 0.7
 #define COLOR_SKY_B 1
 
+#define DARK_BLUE_R (0.0)
+#define DARK_BLUE_G (0.0)
+#define DARK_BLUE_B ( 153.0 / 255)
 
 #endif

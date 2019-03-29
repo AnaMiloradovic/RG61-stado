@@ -168,14 +168,6 @@ void setWoolMaterial()
 void drawSheep(float angle)
 {
     glScalef(0.5,0.5,0.5);
-    /*glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHTING);
-    glColor3f(1,0,0);
-    glutWireSphere(1,16,16);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);*/    
-    
-
     glTranslatef(0,0.5,0);
     glTranslatef(0,0.25*sin(angle),0);
     drawLeg(0.1,-0.07,1,1);

@@ -10,21 +10,7 @@
 #include "light_and_materials.h" //Funkcije za podesavanje osvetljenja i postavljanje materijala
 
 void setSunLight()
-{   
-    // Pozicija i komponente osvetljenja
-    /*GLfloat lightPosition[] = {100,1,20,1};
-    GLfloat light_position[] = { 1, 1, 1, 0 };
-    GLfloat lightAmbient[]  = {1,1,1,1};
-    GLfloat lightDiffuse[]  = {0.7,0.7,0.7,1};
-    GLfloat lightSpecular[] = {1,1,1,1};
-    
-    // Podesavanje osvetljenja
-    glLightfv(GL_LIGHT0,GL_POSITION,lightPosition);
-    glLightfv(GL_LIGHT0,GL_AMBIENT,lightAmbient);
-    glLightfv(GL_LIGHT0,GL_DIFFUSE,lightDiffuse);
-    glLightfv(GL_LIGHT0,GL_SPECULAR,lightSpecular);
-    */
-    
+{
     GLfloat light_position[] = { 0, 10, 10, 0 };
     GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
 

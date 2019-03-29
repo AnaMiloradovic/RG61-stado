@@ -25,9 +25,6 @@ extern int on_going;
 extern int hit;
 extern char curDir;
 extern int timePast;
-/*
- * HACK: extern int closing;
- * HACK: extern unsigned char moving;   */
 
 int main(int argc, char* argv[])
 {
@@ -44,9 +41,9 @@ int main(int argc, char* argv[])
 
 void onDisplayFunction()
 {
-    glClearColor(COLOR_SKY_R - (GETTING_DARK_R*timePast),
-                 COLOR_SKY_G - (GETTING_DARK_G*timePast),
-                 COLOR_SKY_B - (GETTING_DARK_B*timePast),0);  //Boja neba - pre nego sto postavimo osvetljenje
+    glClearColor(COLOR_SKY_R - (((float) COLOR_SKY_R - DARK_BLUE_R) / TIME_OUT) * timePast,
+                 COLOR_SKY_G - (((float) COLOR_SKY_G - DARK_BLUE_G) / TIME_OUT) * timePast,
+                 COLOR_SKY_B - (((float) COLOR_SKY_B - DARK_BLUE_B) / TIME_OUT) * timePast,0); //Boja neba - pre nego sto postavimo osvetljenje
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Cistimo sadrzaj prozora
     glEnable(GL_LIGHTING); //Postavljamo osvetljenje
@@ -75,36 +72,22 @@ void onDisplayFunction()
 
     initialPos();   // Inicijalizujemo pocetne pozicije kugli
     drawObjects();
-    /*
-    if(ifJustSheeps)
-        drawSheeps();
-    
-    else
-    {
-    glPushMatrix();
-    drawBalls();   // Iscrtavamo kugle
-    glPopMatrix();
-    }
-    */
+
     glPushMatrix();
     setCloserMaterial(); 
     drawCloser();  // Iscrtavamo valjak
     glPopMatrix();
 
-    /* HACK:
-    if(closing)
-        tryToClose();
-
-     */
-
-     /* HACK:
-    drawClosedSurfaces();
-      */
      if(hit)      /* TODO USLOVI */
      {
          drawHitting();
          drawHittingPath();
      }
+
+    setMeadowMaterial();
+    glPushMatrix();
+       drawBlocks();
+    glPopMatrix();
     glPopMatrix();
 
 

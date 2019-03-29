@@ -13,8 +13,6 @@ char Name[]= "Stado - sacuvaj sve ovce! 🐑";  //Naslov prozora - i ime igre :)
 int ifJustSheeps = 1;
 int NumOfSheeps, Level;
 float minX,maxX,minZ,maxZ;
-int closedSurfacesLX=0, closedSurfacesRX =0, closedSurfacesUZ=0, closedSurfacesDZ =0;  /* TODO: Broj 'jedinicnih povrsina' koje ogranicavaju ovce, redom, sleva, sdesna, s gornje strane i s donje strane.*/
-int points = 0;   /* TODO: Bodovi i procenat zatvorene povrsine*/
 int closedPercentOfMeadow = 0;
 BALL Balls[MAX_NUM_OF_SHEEPS];
 CLOSER Closer;
@@ -27,19 +25,6 @@ const double GlobalXSize = 1.0/MEADOWDIMENSION_X;
 const double GlobalYSize = 1.0/MEADOWDIMENSION_Y;
 const double GlobalZSize = 1.0/MEADOWDIMENSION_Z;
 /* --- */
-
-/* HACK:  SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];  Ovde cuvamo informacije o svim delovima uspesno zatvorenih povrsina u igri
- Azurirace se svaki put ako igrac uspe da zatvori odredjeni deo slobodne povrsine, a neophodan je zbog iscrtavanja zatvorenih delova porvsine
-   HACK: int NumOfClosedSurfaces = 0; Broj delova uspesno zatvorene povrsine
-*/
-
-/* HACK
-//(Da se mozda i doradi) Informacije neophodne za samu igru -----
-float PercentOfCoveredField = 0; //Procenat uspesno zatvorene povrsine (kada se dodje do trazenog procenta, u zavisnosti od broja ovaca, igrac je pobedio)
-float PercentNeedForWin;          // Neophodan procenat za pobedu (utvrdjuje se na pocetku igre, kada se ucitaju nivo i broj ovaca)
-// -----
- */
-
 void graphicsInitialization()
 {
     glutInitWindowSize(WINDOW_WIDTH,WINDOW_HEIGHT); //Kreiranje prozora i neophodne inicijalizacije
