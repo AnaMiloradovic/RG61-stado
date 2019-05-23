@@ -5,7 +5,7 @@ Da li možete da sačuvate sve ovce i dovedete ih kući žive? 🐑 Cilj igre je
 
 ## 🎲 Pravila igre
 
-* Igra se može igrati u 5 nivoa i sa do 5 ovaca.
+* Igra se može igrati u 5 nivoa i sa do 5 ovaca. Na samom početku izvršavanja programa od korisnika će se tražiti da na standardnom ulazu unese željeni nivo i broj ovaca.
 
 * Partija traje 75 sekundi. Za to vreme bi trebalo ovce zatvoriti u prostor veličine do 10% od ukupne površine terena po ovci.
 
