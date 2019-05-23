@@ -318,12 +318,11 @@ void drawCloser()
     glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
     glScalef(0.5*GlobalXSize,GlobalYSize,0.5*GlobalZSize);
     drawObject();
-
     glPopMatrix();
 }
 
 
-
+/*
 static void drawCylinder()
 {
     float h,u;
@@ -346,7 +345,7 @@ static void drawCylinder()
             glVertex3f(cos(u),h+PI/20,sin(u));
         }
     glEnd();
-}
+}*/
 
 void drawDecorativeGrass(int translateParameter, int parameterZ)
 {
