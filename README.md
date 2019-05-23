@@ -13,5 +13,16 @@ Da li možete da sačuvate sve ovce i dovedete ih kući žive? 🐑 Cilj igre je
 
 * Putanje se, osim prelaskom celom dužinom ili širinom mogu crtati i sa jednim ili dva skretanja, ako i takve putanje zajedno sa postojećim zidovima čine pravougaonu oblast u kojoj su sve ovce. Ovo je čak i poželjno, i ovakvi brzi i dovitljivi potezi se dodatno nagrađuju.
 
+* Vodite računa o vremenu! Posebno se pazite kada ste na koji procenat od ciljog zatvaranja ovaca, tu je sve jako blizu i za čas se neprimetno nagazi ovca.
 
+     ####                  Komande za igru i upravljanje kosom
+ 
+ 
+| Komanda | Šta radi |
+----------|-----------
+|  `↑`  ,  `↓`  ,  `←`  ,  `→`   |   Pokretanje kose u različitim pravcima |
+| `space` | Kada ga kliknemo time označavamo početak iscrtavanja.<br/> Radiće ako se kosa nalazi **na ivici** otvorenog dela terena. |
+| `p`     | Igra se pauzira. |
+| `esc`   | Igra se napušta.(bez obzira na ishod) |
 
+🐑🐑🐑🐑🐑 *Želimo Vam sjajnu zabavu uz naše ovčice!* 🐑🐑🐑🐑🐑
