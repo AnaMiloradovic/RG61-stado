@@ -7,7 +7,12 @@ void rollingBalls(int timer_id);  // Funkcija kojom implementiramo kretanje kugl
 void colissionDetection();     // Funkcija za detekciju sudara
 void drawHitting();
 void drawHittingPath();
-int stepTest(POINT beginPoint, POINT* turns, int length);
+static void inline justDrawHittingPath(POINT* turns, int numberOfTurns);
+int stepTest(POINT* turns, int length);
 static int checkBetween(POINT p1, POINT p2, BALL pb);
-void testForNewPoints(POINT beginPoint, POINT* turns, int length);
+void checkForNewPoints(POINT* turns, int numberOfTurns);
+   void checkForNewPointsOne(POINT* turns);
+   void checkForNewPointsTwo(POINT* turns);
+   void checkForNewPointsThree(POINT* turns);
+void winning();
 #endif

@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 #include <math.h>
 
-/* Matematicka konstanta PI i jedna jako mala vrednost EPSILON.*/
+/* Dobra stara matematicka konstanta PI i jedna jako mala vrednost EPSILON.*/
 #define PI 3.1415926535
 #define EPSILON 0.01
 
@@ -79,19 +79,32 @@ static void on_reshape(int width, int height)
 void setMaterial()  /* Parametri materijala su stavljeni na default-ne vrednosti, pri konkretnoj primeni ih treba podesiti. */
 {
     GLfloat ambient_coeffs[] = { 0.8, 0.8, 0.8, 1 };
-    GLfloat diffuse_coeffs[] = { .9, .9, .9, 1 };
-    GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
-    GLfloat shininess = 15;
+    GLfloat diffuse_coeffs[] = { .7, .7, .7, 1 };
+    //GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
+    GLfloat emission_coeffs[] = {1,1,220.0/256,0.25};
+    //GLfloat shininess = 15;
     
-    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
-    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
+    glMaterialfv(GL_FRONT, GL_EMISSION, emission_coeffs);
+    //glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
 void drawObject()
 {
     setMaterial();
+    
+    glRotatef(-90,0,1,0);
+    glutSolidCone(0.02,0.3,16,16);
+    glRotatef(72,1,0,0);
+    glutSolidCone(0.02,0.3,16,16);
+    glRotatef(72,1,0,0);
+    glutSolidCone(0.02,0.3,16,16);
+    glRotatef(72,1,0,0);
+    glutSolidCone(0.02,0.3,16,16);
+    glRotatef(72,1,0,0);
+    glutSolidCone(0.02,0.3,16,16);
     /*
      * Ovde treba implementirati
      * crtanje ciljnog objekta.
@@ -108,6 +121,18 @@ static void on_display(void) /* Ciscenje prozora, podesavanje kamere i podesavan
     
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    
+    /* Pozicija svetla (u pitanju je direkcionalno svetlo). */
+    GLfloat light_position[] = { 1, 1, 1, 0 };
+
+    /* Ambijentalna boja svetla. */
+    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
+
+    /* Difuzna boja svetla. */
+    GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
+
+    /* Spekularna boja svetla. */
+    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);

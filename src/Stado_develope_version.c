@@ -21,6 +21,7 @@ extern char Name[];
 extern int NumOfSheeps, Level;
 extern float minX,maxX,minZ,maxZ;
 extern int on_going;
+extern int winner;
 /* ********************* */
 extern int hit;
 extern char curDir;
@@ -59,6 +60,8 @@ void onDisplayFunction()
     glLoadIdentity();
     if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
         gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
+    else if(winner)
+        gluLookAt((maxX - minX)/2.2,2,(maxZ - minZ)/2.0,maxX ,2,maxZ ,0,1,0);
     else
     gluLookAt(0,5,13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 
@@ -73,10 +76,14 @@ void onDisplayFunction()
     initialPos();   // Inicijalizujemo pocetne pozicije kugli
     drawObjects();
 
+
     glPushMatrix();
-    setCloserMaterial(); 
-    drawCloser();  // Iscrtavamo valjak
+     setCloserMaterial();
+     if(!winner)
+        drawCloser();  // Iscrtavamo valjak
+       // else drawHedge();
     glPopMatrix();
+
 
      if(hit)      /* TODO USLOVI */
      {
@@ -96,13 +103,15 @@ void onDisplayFunction()
         printf("Isteklo vreme - kraj igre \n");
         exit(EXIT_SUCCESS);
     }
+
+
     if(on_going)
     {
        glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
        timePast++;
     }
 
-    else
+    else if(!winner)
     {
         glPushMatrix();
         setLetters();
@@ -110,6 +119,8 @@ void onDisplayFunction()
         for(int i=0;i<PAUZE_LEN;i++)
            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,pause[i]);
     }
+
+
     
     glutSwapBuffers();
 }

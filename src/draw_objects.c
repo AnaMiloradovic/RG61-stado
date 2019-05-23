@@ -38,23 +38,41 @@ void drawMeadow()
     glPopMatrix();
 
     glPushMatrix();
+    drawDecorativeGrass(1,0);
+    glPopMatrix();
+    glPushMatrix();
     glTranslatef(- 1 - 0.5 * 0.5*GlobalXSize,0,0); /*TODO: Da se iskomentarise*/
     glScalef(0.5 * GlobalXSize, GlobalYSize , 2 * (1 + 0.5*GlobalZSize) );
     glutSolidCube(1);
     glPopMatrix();
-
+    glPushMatrix();
+    drawDecorativeGrass(-1,0);
+    glPopMatrix();
     glPushMatrix();
     glTranslatef(0,0,1 + 0.5 * 0.5*GlobalZSize); /*TODO: Da se iskomentarise*/
     glScalef(2 * (1 + 0.5 * GlobalXSize), GlobalYSize , 0.5 * GlobalZSize);
     glutSolidCube(1);
     glPopMatrix();
-
+/*
+    glPushMatrix();
+    drawDecorativeGrass(1,1);
+    glPopMatrix();*/
     glPushMatrix();
     glTranslatef(0,0, - 1 - 0.5 * 0.5 * GlobalZSize); /*TODO: Da se iskomentarise*/
     glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
     glutSolidCube(1);
     glPopMatrix();
+    /*glPushMatrix();
+    drawDecorativeGrass(-1,1);
+    glPopMatrix();*/
+
 }
+/*
+void drawHedge()
+{
+    glTranslatef(minX + 0.2*(minX - maxX),0,0);
+    glRotatef(2,0,0,1);
+}*/
 /*
 void drawBalls()
 {
@@ -92,7 +110,6 @@ void drawSheeps()
        glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
     }
      */
-
 
 
 void drawObjects()
@@ -218,15 +235,93 @@ void drawClouds()
 
 
 
+
+
+void set_normal_and_vertex(float u, float v)
+{
+    glNormal3f(
+            sin(v),
+            0,
+            cos(v)
+    );
+    glVertex3f(
+            sin(v),
+            u,
+            cos(v)
+    );
+}
+
+
+
+void setLightGrayMaterial()
+{
+    GLfloat materialCloserAmbient[] = {0.2,0.2,0.2,1};
+    GLfloat materialCloserDiffuse[] = {0.8,0.8,0.8,1};
+    GLfloat materialCloserSpecular[] = {0.9,0.9,0.9,1};
+    GLfloat shininess=10;
+    glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,materialCloserAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,materialCloserDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,materialCloserSpecular);
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
+}
+
+
+
+
+
+
+void drawObject()
+{
+
+    float u, v;
+
+    glPushMatrix();
+    glRotatef(10,0,0,1);
+    glRotatef(-80,0,1,0);
+    glScalef(0.5,0.5,0.5);
+    glScalef(0.25,1.2,0.25);
+    for (u = 0; u < PI; u += PI / 20) {
+        glBegin(GL_TRIANGLE_STRIP);
+        for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {   //NOTE: Dovoljna aproksimacija je 9 stepeni. ;)
+            set_normal_and_vertex(u, v);
+            set_normal_and_vertex(u + PI / 20, v);
+        }
+        glEnd();
+    }
+    glScalef(1.2,0.1,1.2);
+    setLightGrayMaterial();
+    for (u = 0; u < PI; u += PI / 20) {
+        glBegin(GL_TRIANGLE_STRIP);
+        for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {   //NOTE: Dovoljna aproksimacija je 9 stepeni. ;)
+            set_normal_and_vertex(u, v);
+            set_normal_and_vertex(u + PI / 20, v);
+        }
+        glEnd();
+    }
+    glScalef(1/(1.2*0.25),1/(0.1*1.2),1/(1.2*0.25));
+    glRotatef(30,0,0,1);
+    glutSolidCone(0.2,3,20,20);
+    glTranslatef(0,0,3);
+    glRotatef(60,0,0,1);
+    //glutSolidCone(0.1,0.5,20,20);
+    glPopMatrix();
+    glEnd();
+}
+
+
+
+
+
 void drawCloser()
 {
     glPushMatrix();
     glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
     glScalef(0.5*GlobalXSize,GlobalYSize,0.5*GlobalZSize);
-    drawCylinder();
+    drawObject();
 
     glPopMatrix();
 }
+
 
 
 static void drawCylinder()
@@ -251,4 +346,41 @@ static void drawCylinder()
             glVertex3f(cos(u),h+PI/20,sin(u));
         }
     glEnd();
+}
+
+void drawDecorativeGrass(int translateParameter, int parameterZ)
+{
+    glScalef(1.0/MEADOWDIMENSION_X,1.0/MEADOWDIMENSION_Y,1.0/MEADOWDIMENSION_Z);
+    if(parameterZ) glTranslatef(translateParameter* MEADOWDIMENSION_X,2*MEADOWDIMENSION_Y,-MEADOWDIMENSION_Z + 0.5);
+    else glTranslatef(-MEADOWDIMENSION_X+0.5,2*MEADOWDIMENSION_Y,translateParameter*MEADOWDIMENSION_Z);
+    GLdouble equation[] = {0,1,0,0};
+    glClipPlane(GL_CLIP_PLANE0,equation);
+    glEnable(GL_CLIP_PLANE0);
+    GLdouble equation2[] = {0,0,-1,MEADOWDIMENSION_Z + 1};
+    if(parameterZ)
+    {
+        equation2[0] = -1;
+        equation2[2] = 0;
+        equation2[3] = MEADOWDIMENSION_X + 1;
+    }
+    glClipPlane(GL_CLIP_PLANE1,equation2);
+    glEnable(GL_CLIP_PLANE1);
+    int i,i_max = 8*2;
+    if(parameterZ) i_max *= 2;
+    for(i=0;i<i_max;i++) {
+        glPushMatrix();
+        if(parameterZ)
+            glScalef(1,1,MEADOWDIMENSION_Z/(0.8*0.2));
+        else glScalef( MEADOWDIMENSION_X / 8.0, 1, 1);
+        if(parameterZ)
+            glRotatef(-45,1,0,0);
+        else glRotatef(-45, 0, 0, 1);
+        glutSolidCube(1);
+        glPopMatrix();
+        if(parameterZ)
+            glTranslatef(0,0,MEADOWDIMENSION_X/8.0);
+        else glTranslatef(MEADOWDIMENSION_X/8.0,0,0);
+    }
+    glDisable(GL_CLIP_PLANE0);
+    glDisable(GL_CLIP_PLANE1);
 }

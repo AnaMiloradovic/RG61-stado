@@ -8,17 +8,21 @@
 #include "callbacks.h" //Callback funckije
 #include "draw_objects.h" //Funckije za iscrtavanje objekata
 #include "light_and_materials.h" //Funkcije za podesavanje osvetljenja i postavljanje materijala
-
+extern int timePast;
 void setSunLight()
 {
-    GLfloat light_position[] = { 0, 10, 10, 0 };
+    GLfloat light_position[] = { 0, 100, 100, 0 };
     GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
 
     /* Difuzna boja svetla. */
-    GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
+    GLfloat light_diffuse[] = { 0.7 - (((float) COLOR_SKY_R - DARK_BLUE_R) / TIME_OUT) * timePast,
+                                0.7 - (((float) COLOR_SKY_R - DARK_BLUE_G) / TIME_OUT) * timePast,
+                                0.7 - (((float) COLOR_SKY_R - DARK_BLUE_B) / TIME_OUT) * timePast, 1 };
 
     /* Spekularna boja svetla. */
-    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
+    GLfloat light_specular[] = { 0.9 - (((float) COLOR_SKY_R - DARK_BLUE_R) / TIME_OUT) * timePast,
+                                 0.9 - (((float) COLOR_SKY_R - DARK_BLUE_G) / TIME_OUT) * timePast,
+                                 0.9 - (((float) COLOR_SKY_R - DARK_BLUE_B) / TIME_OUT) * timePast, 1 };
     
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
@@ -37,8 +41,8 @@ void setMeadowMaterial()
     // Postavljanje materijala na livadu
     glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,materialGrassAmbient);
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,materialGrassDiffuse);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,materialGrassSpecular);
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
+    //glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,materialGrassSpecular);
+    //glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
 }
 
 void setBallMaterial()
@@ -74,3 +78,13 @@ void setLetters()
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,letters);
     glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,letters);
 }
+/*TODO
+void setStarMaterial()
+{
+    GLfloat ambient_coeffs[] = { 0.8, 0.8, 0.8, 1 };
+    GLfloat diffuse_coeffs[] = { .7, .7, .7, 1 };
+    GLfloat emission_coeffs[] = {1,1,220.0/256,0.25};
+
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
+    glMaterialfv(GL_FRONT, GL_EMISSION, emission_coeffs);
+}*/

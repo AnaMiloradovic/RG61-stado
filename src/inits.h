@@ -17,6 +17,7 @@
 #define MEADOWDIMENSION_Z (10.0) 
 #define RADIUS (0.5)
 #define TIME_OUT (75*50) /* TODO Moguce da ovde malo kasni zbog virtuelne masine itd */
+#define NIGHT_NEAR (60*50)
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
@@ -43,4 +44,5 @@ void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije
 void initialPos(); //inicijalizacije pocetnu poziciju kugli
 
+#define PERCENT_PER_SHEEP (5)
 #endif

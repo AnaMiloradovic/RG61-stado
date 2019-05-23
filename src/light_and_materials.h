@@ -6,5 +6,5 @@ void setMeadowMaterial();
 void setBallMaterial();
 void setCloserMaterial();
 void setLetters();
-
+/*void setStarMaterial();*/
 #endif
