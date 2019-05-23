@@ -241,12 +241,12 @@ void draw_object()  /* Funkcija koja kompletno iscrtava ovcu. */
 {
     glScalef(0.5,0.5,0.5);
      /* Prvo privremeno gasimo svetlo samo dok iscrtamo pomocnu zicanu sferu. */
-    glDisable(GL_LIGHT0);
+    /*glDisable(GL_LIGHT0);
     glDisable(GL_LIGHTING);
     glColor3f(1,0,0);
     glutWireSphere(1,16,16);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);*/
     /*-----*/
 
     setSkinMaterial();

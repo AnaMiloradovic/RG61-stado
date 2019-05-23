@@ -58,10 +58,10 @@ void onDisplayFunction()
 
     glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
     glLoadIdentity();
-    if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
-        gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
-    else if(winner)
+    if(winner)
         gluLookAt((maxX - minX)/2.2,2,(maxZ - minZ)/2.0,maxX ,2,maxZ ,0,1,0);
+    else if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
+        gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
     else
     gluLookAt(0,5,13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 

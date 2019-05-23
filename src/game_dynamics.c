@@ -653,6 +653,7 @@ void winning()
 {
     on_going = 0;
     winner = 1;
+    printf("Svaka cast!\n");
     glutPostRedisplay();
 }
 /*

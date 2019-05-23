@@ -44,5 +44,5 @@ void gameDataInitialization();  //Funkcija za unos podataka o igri
 void graphicsInitialization(); //Neophodne graficke inicijalizacije
 void initialPos(); //inicijalizacije pocetnu poziciju kugli
 
-#define PERCENT_PER_SHEEP (5)
+#define PERCENT_PER_SHEEP (10)
 #endif
