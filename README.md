@@ -1,6 +1,6 @@
 # RG61-stado
 
-![Stado](https://github.com/MATF-RG18/RG61-stado/blob/master/PrintScreens/Printscreen_3b.png)
+<img src = 'PrintScreens/sheep_logo.png' width = "300px" alt = "Stado - logo" />
 
 # Pravila igre
 
