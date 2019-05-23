@@ -44,7 +44,7 @@ void graphicsInitialization()
 void gameDataInitialization()
 {
    int toContinue=0; //Indikator korektnog unosa
-   printf("Izaberite nivo(1-10) i broj ovaca(1-5):\n\n-> ");
+   printf("Izaberite nivo(1-5) i broj ovaca(1-5):\n\n-> ");
    while(!toContinue)  //Dok se ne unesu korektni podaci
    {
       scanf("%d%d",&Level,&NumOfSheeps);
