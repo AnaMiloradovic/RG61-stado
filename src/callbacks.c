@@ -15,6 +15,7 @@ extern int hit;
 extern char curDir;
 extern unsigned char moving;
 extern float maxX, minX, maxZ, minZ;
+extern GLuint textureName;
 void onReshapeFunction(int w, int h)
 {
     width=w;
@@ -32,6 +33,7 @@ void onKeyboardFunction(unsigned char key, int x, int y)
     {
         case 27:
             printf("Izasli ste iz igre.");
+            glDeleteTextures(1, &textureName);
             exit(0);
             break;
         case 'p':

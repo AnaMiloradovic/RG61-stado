@@ -78,14 +78,14 @@ static void on_reshape(int width, int height)
 
 void setMaterial()  /* Parametri materijala su stavljeni na default-ne vrednosti, pri konkretnoj primeni ih treba podesiti. */
 {
-    GLfloat ambient_coeffs[] = { 0.8, 0.8, 0.8, 1 };
-    GLfloat diffuse_coeffs[] = { .9, .9, .9, 1 };
-    GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
-    GLfloat shininess = 15;
+    GLfloat materialAmbient[] = {0.3,0.1,0.1,1};
+    GLfloat materialDiffuse[] = {0.4,0.1,0.1,1};
+    GLfloat materialForSquares[] = {0.5,0.5,0.5,1};
+    GLfloat shininess=10;
     
-    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, materialAmbient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialDiffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, materialForSquares);
     glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
@@ -100,6 +100,11 @@ void drawObject()
 
 static void on_display(void) /* Ciscenje prozora, podesavanje kamere i podesavanje svetla.*/
 {
+    GLfloat light_position[] = { 1, 1, 1, 0 };
+    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
+    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glMatrixMode(GL_MODELVIEW);

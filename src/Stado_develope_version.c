@@ -59,7 +59,9 @@ void onDisplayFunction()
     glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
     glLoadIdentity();
     if(winner)
-        gluLookAt((maxX - minX)/2.2,2,(maxZ - minZ)/2.0,maxX ,2,maxZ ,0,1,0);
+        gluLookAt(MEADOWDIMENSION_X * (maxX + minX) * 0.5, 10.0 * MEADOWDIMENSION_Y, MEADOWDIMENSION_Z * (maxZ + 0.1),
+                MEADOWDIMENSION_X * (maxX + minX) * 0.5, 3.0 * MEADOWDIMENSION_Y, MEADOWDIMENSION_Z * (maxZ + minZ) * 0.5,
+                  0,1,0);
     else if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
         gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
     else
@@ -84,13 +86,30 @@ void onDisplayFunction()
        // else drawHedge();
     glPopMatrix();
 
-
      if(hit)      /* TODO USLOVI */
      {
          drawHitting();
          drawHittingPath();
      }
 
+    if(winner)
+    {
+        glPushMatrix();
+           drawHedge(minZ,maxZ,maxX,0);
+        glPopMatrix();
+
+        glPushMatrix();
+           drawHedge(minZ,maxZ,minX,0);
+        glPopMatrix();
+
+        glPushMatrix();
+           drawHedge(minX,maxX,minZ,1);
+        glPopMatrix();
+
+        glPushMatrix();
+           drawHedge(minX,maxX,maxZ,1);
+        glPopMatrix();
+    }
     setMeadowMaterial();
     glPushMatrix();
        drawBlocks();
@@ -119,8 +138,6 @@ void onDisplayFunction()
         for(int i=0;i<PAUZE_LEN;i++)
            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,pause[i]);
     }
-
-
     
     glutSwapBuffers();
 }

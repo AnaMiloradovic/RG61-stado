@@ -25,4 +25,6 @@ add_executable(RG61_stado
         src/light_and_materials.h
         src/Stado_develope_version.c
         src/sheep.h
-        src/sheep.c)
+        src/sheep.c
+        src/image.h
+        src/image.c)

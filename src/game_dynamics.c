@@ -10,12 +10,14 @@
 #include "draw_objects.h" //Funckije za iscrtavanje objekata
 #include "light_and_materials.h" //Funkcije za podesavanje osvetljenja i postavljanje materijala
 #include "game_dynamics.h" //Funckije za kretanja u igri
+#include "image.h"
 
 extern BALL Balls[];
 extern CLOSER Closer;
 extern int ifJustSheeps;
 extern int NumOfSheeps;
 extern float minX,maxX,minZ,maxZ;
+GLuint textureName;
 int on_going = 1;
 int winner = 0;
 /* int closing = 0;  */
@@ -247,13 +249,14 @@ static void inline justDrawHittingPath(POINT* turns, int numberOfTurns)
     glDisable(GL_LIGHT0);
     glColor3f(.4,0.78,.4);
 
+    glLineWidth(1.5);
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(5, 0xf0f0);
     glBegin(GL_LINE_STRIP);
     int i;
     for(i=0;i<numberOfTurns;i++)
         glVertex3f(turns[i].pX,turns[i].pY,turns[i].pZ);
-    glVertex3f(Closer.pX,1.1,Closer.pZ);
+    glVertex3f(Closer.pX,1.2,Closer.pZ);
     glEnd();
     glDisable(GL_LINE_STIPPLE);
     glEnable(GL_LIGHTING);
@@ -368,6 +371,7 @@ int stepTest(POINT* turns, int length)
         if(fabs((double) Closer.pX - Balls[i].pX) <  RADIUS*GlobalXSize && fabs((double) Closer.pZ - Balls[i].pZ) < RADIUS*GlobalZSize)
         {
             printf("Presli ste preko ovce\n\nKRAJ IGRE\n");
+            glDeleteTextures(1,&textureName);
             exit(EXIT_SUCCESS);
         }
        int j;

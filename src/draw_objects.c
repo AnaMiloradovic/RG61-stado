@@ -10,6 +10,7 @@
 #include "draw_objects.h"
 #include "light_and_materials.h"
 #include "sheep.h"
+#include "image.h"
 
 extern BALL Balls[];
 extern CLOSER Closer;
@@ -25,6 +26,7 @@ extern double GlobalYSize;
 extern double GlobalZSize;
 /*---   */
 
+GLuint textureNames;
 
 void drawMeadow()
 {
@@ -62,17 +64,82 @@ void drawMeadow()
     glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
     glutSolidCube(1);
     glPopMatrix();
+    
+    initializeTexture();
+    applyTexture(-1,1,-1,1);
     /*glPushMatrix();
     drawDecorativeGrass(-1,1);
     glPopMatrix();*/
 
 }
-/*
-void drawHedge()
+
+void drawHedge(float minR, float maxR, float fixed, int indX)
 {
-    glTranslatef(minX + 0.2*(minX - maxX),0,0);
-    glRotatef(2,0,0,1);
-}*/
+    setCloserMaterial();
+    glPushMatrix();
+    if(indX)
+        glTranslatef((maxR + minR)/2.0,5,fixed);
+    else
+        glTranslatef(fixed,5,(maxR + minR)/2.0);
+
+    glPushMatrix();
+    if(indX)
+    {
+        glTranslatef(-(maxR-minR)*0.4,0,0);
+        //glRotatef(1,0,0,1);
+    }else {
+        glTranslatef(0,0,-(maxR-minR)*0.4);
+        glRotatef(2,0,1,0);
+    }
+    glScalef(0.3 * GlobalXSize, GlobalYSize,0.3 * GlobalZSize);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+    if(indX)
+    {
+        glTranslatef((maxR-minR)*0.4,0,0);
+        glRotatef(5,0,1,0);
+    } else{
+        glTranslatef(0,0,(maxR-minR)*0.4);
+        glRotatef(5,0,1,0);
+    }
+    glScalef(0.3 * GlobalXSize,GlobalYSize,0.3 * GlobalZSize);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+    if(indX)
+    {
+        glTranslatef(0,0.7,0);
+        glRotatef(30,0,0,1);
+        glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
+
+    }
+    else{
+        glTranslatef(0,0.7,0);
+        glRotatef(30,1,0,0);
+        glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
+    }
+    glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+    if(indX)
+    {
+        glTranslatef(0,-0.7,0);
+        glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
+        glRotatef(-7,0,0,1);
+    }else{
+        glTranslatef(0,-0.7,0);
+        glRotatef(-7,1,0,0);
+        glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
+    }
+    glutSolidCube(1);
+    glPopMatrix();
+
+    glPopMatrix();
+}
 /*
 void drawBalls()
 {
@@ -233,8 +300,65 @@ void drawClouds()
 }
 */
 
+void initializeTexture()
+{
+    Image * image;
+    glEnable(GL_TEXTURE_2D);
+
+    glTexEnvf(GL_TEXTURE_ENV,
+              GL_TEXTURE_ENV_MODE,
+              GL_REPLACE);
+
+    image = image_init(0, 0);
+
+    char* fileName = "texture__grass.bmp";
+    image_read(image, fileName);
+
+    glGenTextures(1, &textureNames);
+
+    glBindTexture(GL_TEXTURE_2D, textureNames);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 image->width, image->height, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 
 
+    /* Iskljucujemo aktivnu teksturu */
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    /* Unistava se objekat za citanje tekstura iz fajla. */
+    image_done(image);
+}
+
+void applyTexture(float minX, float maxX , float minZ , float maxZ)
+{
+    glBindTexture(GL_TEXTURE_2D, textureNames);
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0, 0);
+    glVertex3f(minX, 1.1, minZ);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(maxX, 1.1, minZ);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(maxX, 1.1, maxZ);
+
+    glTexCoord2f(0, 1);
+    glVertex3f(minX, 1.1, maxZ);
+    glEnd();
+
+
+    /* Iskljucujemo aktivnu teksturu */
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 
 void set_normal_and_vertex(float u, float v)
