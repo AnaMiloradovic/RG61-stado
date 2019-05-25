@@ -16,7 +16,7 @@ extern int hit;         /* Indikator da li je u toku iscrtavanje zatvarajuce put
 extern char curDir;     /* Promenljiva koja cuva tekuci pravac i smer kretanja kose u toku iscrtavanja
                            zatvarajuce putanje - neophodno za detekciju skretanja. */
 extern float maxX, minX, maxZ, minZ;  /* Unutar ovih granica X i Z koordinata je slobodna povrsina za ovce. */
-extern GLuint textureName;  /* U okviru ove promenljive je 'ime' teksture koju koristimo. */
+extern GLuint textureNames;  /* U okviru ove promenljive je 'ime' teksture koju koristimo. */
 
 void onReshapeFunction(int w, int h) /* Svaki put kada ucitamo prozor ili mu promenimo velicinu se poziva ova funkcija. */
 {                                    /* Ovde podesavamo viewport - kako da nam se mapira i podesavamo projekciju. */
@@ -35,7 +35,7 @@ void onKeyboardFunction(unsigned char key, int x, int y) /* Odgovarajuce reakcij
     {
         case 27:  /* esc - taster, Ako se pobedi u igri, treba ga stisnuti da se izadje iz igre. */
             printf("Izasli ste iz igre.");  /* Ako se klikne u sred igre, momentalno se ista napusta, bez obzira na stanje igre. */
-            glDeleteTextures(1, &textureName);  /* Oslobadjamo resurs od teksture. */
+            glDeleteTextures(1, &textureNames);  /* Oslobadjamo resurs od teksture. */
             exit(0);
             break;
         case 'p':  /* Za pauzu. Pauza ne utice na stanje igre, i ponovnim kliktanjem istog tastera igrac normalno nastavlja gde je stao. */

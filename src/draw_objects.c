@@ -45,19 +45,19 @@ void drawMeadow() /* Funkcija za iscrtavanje livade - terena za igru. */
        glutSolidCube(1); /* Posto smo skalirali sve dimenzije kako nam odgovaraju, crtamo transformisanu 'kocku' (zapravo kvadar) koji ce imati zeljene dimenzije. */
     glPopMatrix();   /* Isti je princip i za ostale tri ivice. */
 
-    glPushMatrix();
+    glPushMatrix();  /* Leva ivica. */
        glTranslatef(- 1 - 0.5 * 0.5*GlobalXSize,0,0); 
        glScalef(0.5 * GlobalXSize, GlobalYSize , 2 * (1 + 0.5*GlobalZSize) );
        glutSolidCube(1);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix();  /* Prednja ivica - ka nama. */
        glTranslatef(0,0,1 + 0.5 * 0.5*GlobalZSize);
        glScalef(2 * (1 + 0.5 * GlobalXSize), GlobalYSize , 0.5 * GlobalZSize);
        glutSolidCube(1);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix();  /* Zadnja ivica. */
        glTranslatef(0,0, - 1 - 0.5 * 0.5 * GlobalZSize);
        glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
        glutSolidCube(1);
@@ -77,8 +77,11 @@ void drawMeadow() /* Funkcija za iscrtavanje livade - terena za igru. */
     applyTexture(-1,1,-1,1);
 }
 
-void drawHedge(float minR, float maxR, float fixed, int indX) /* Funkcija za iscrtavanje ogradice oko ovcica na kraju partije. */
+void drawHedge(float minR, float maxR, float fixed, int indX) /* Funkcija za iscrtavanje ogradice oko ovcica na kraju partije. Adaptirana iz fajla hedge.c (3D-Models) */
 {                                                            /* Namerno su grede pomalo iskrivljene, da bi izgledalo vernije. */
+    /* Parametri: minR, maxR - maksimalna i minimalna koordinata ose duz koje se crta, 
+       fixed - fiksirana koordinata na osi duz koje se ne crta. (govori nam do kraja o polozaju ograde, u odnosu na tu osu)
+       indX - indikator duz koje ose crtamo ogradu, 0 ako crtamo po z-osi, inace crtamo po x-osi. */
     setCloserMaterial(); /* Isti materijal se koristi kao i za drsku kose. */
 
     glPushMatrix();  /* Transliramo koordinatni sistem u drugi koordinatni pocetak u odnosu na koji cemo da crtamo. */
@@ -229,6 +232,7 @@ void initializeTexture() /* Funkcija za inicijalizacuje teksture. Koristeci bibl
     image_done(image);
 } /* ------------------------------------------------------------------------------------------------------------------------------------------------*/
 
+
 void applyTexture()  /* Funkcija u kojoj primenjujemo inicijalizovanu teksturu na povrsinu gde ovce trce. */
 {
     glBindTexture(GL_TEXTURE_2D, textureNames); /* Aktiviramo zeljenu teksturu.*/
@@ -314,9 +318,9 @@ void drawCloser()  /* Omotac funkcija za crtanje zatvarajuceg objekta. Namerno j
 }
 
 void drawDecorativeGrass(int translateParameter) /* Funkcija koja iscrtava dekorativnu travu na prednjem i zadnjem kraju terena. */
-{
-    glScalef(GlobalXSize,GlobalYSize,GlobalZSize);  /* Hocemo da ovde radimo sa svetskim koordinatama. */
-    glTranslatef(-MEADOWDIMENSION_X+0.5,2*MEADOWDIMENSION_Y,translateParameter*MEADOWDIMENSION_Z);
+{                                                /* Parametar translateParameter - da li crtamo travu na prednjem ili zadnjem kraju terena. (moze biti 1 ili -1; u zavisnosti od njega vrsimo odgovarajucu translaciju po z-osi) */
+    glScalef(GlobalXSize,GlobalYSize,GlobalZSize);  /* Hocemo da u ovoj funkciji radimo sa svetskim koordinatama. */
+    glTranslatef(-MEADOWDIMENSION_X+0.5,2*MEADOWDIMENSION_Y,translateParameter*MEADOWDIMENSION_Z); /* Odgovarajuca translacija pre iscrtavanja. */
 
     GLdouble equation[] = {0,1,0,0}; /* Jednacina clipping ravni y=0. Njom cemo da isecemo donje delove zarotiranih kocki koje cine travu. */
     glClipPlane(GL_CLIP_PLANE0,equation);
@@ -331,5 +335,5 @@ void drawDecorativeGrass(int translateParameter) /* Funkcija koja iscrtava dekor
         glPopMatrix();
         glTranslatef(MEADOWDIMENSION_X/8.0,0,0);  /* Transliramo za njenu sirinu po x - osi za crtanje sledece travke. */
     }
-    glDisable(GL_CLIP_PLANE0);
+    glDisable(GL_CLIP_PLANE0); /* Na kraju, posle iscrtavanja citave trave, gasimo clip-plane. */
 }
