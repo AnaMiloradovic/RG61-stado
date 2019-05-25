@@ -20,52 +20,54 @@ extern unsigned int pointsWon; /* Osvojeni poeni - srazmerni su pokrivenom proce
 extern float coveredPercent;  /* Pokriveni procenat terena. */
 int hit = 0;          /* Jos jedna vazna kontrolna promenljiva igre - da li igrac trenutno iscrtava zatvarajucu putanju. */
 char curDir = 0;      /* Trenutni pravac i smer kretanja zatvarajuceg objekata - azuriramo ga samo dok je hit = 1, jer nam je jedino tad bitan. */
+                      /* Neophodan nam je kada detektujemo skretanje pri iscrtavanju zatvarajuce putanje. (vise informacija u funkciji drawHittingPath) */
+int max_cur = 1;      /* Pomocni parametar za iscrtavanje zasipanja trave.
+                         Promenjena da bude globalna, da bi mogle druge funkcije da joj pristupe i vrate je na 1 kada se zavrsi iscrtavanje putanje, bez toga pocetak njenog iscrtavanja ne bi izgledao uverljivo. */
 
 /* Jedinice u svetskom koordinatnom sistemu. (vise informacija u fajlu draw_objects.c) */
 extern double GlobalXSize;
 extern double GlobalYSize;
 extern double GlobalZSize;
 
-void rollingBalls(int timer_id)
+void rollingBalls(int timer_id) /* Funkcija za kretanje ovcica, aktivna samo kada je igra u toku - glavna funkcija igre(iako se ne bi reklo po broju linija koda). */
 {
-    if(timer_id != TIMER_ID_ROLLING)
+    if(timer_id != TIMER_ID_ROLLING) /* Eventualna provera id timer-a . */
         return;
+
     int i;
-    for(i=0;i<NumOfSheeps;i++)
+    for(i=0;i<NumOfSheeps;i++)  /* Menjamo polozaj ovcica. */
     {
         Balls[i].pX += Balls[i].vX;
         Balls[i].pZ += Balls[i].vZ;
     }
-    colissionDetection();
-    glutPostRedisplay();
+    colissionDetection();      /*  Proveravamo da nije doslo do kolizije i u skladu sa tim menjamo smer brzine. */
+    glutPostRedisplay();       /* Ponovno iscrtavanje. Funkciju pozivamo iz on_display funkcije, zato nije neophodno ovde ponovo registrovati timer. */
 }
 
-void colissionDetection()
-{
-    int i,j,colission[]={TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK};
-    for(i=0;i<NumOfSheeps;i++)
-    {
-        if(Balls[i].pX + ((float)RADIUS/MEADOWDIMENSION_X) >= maxX || Balls[i].pX  - ((float)RADIUS/MEADOWDIMENSION_X) <= minX)
+void colissionDetection()      /* Funkcija za detekciju kolizije medju ovcama i ovcama sa zidovima terena. */
+{                              /* Ako dodje do kolizije, menja se smer kretanja ovcica. */
+    int i,j,colission[]={TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK,TO_CHECK}; /* colission - pomocni niz koji nam govori da li smo vec brzinu odgovarajuce ovce. */
+    for(i=0;i<NumOfSheeps;i++)                                          /* TO_CHECK - treba da se azurira. */
+    {   /* Proveravamo prvo koliziju sa samim zidovima terena. */
+        if(Balls[i].pX + ((float)RADIUS/MEADOWDIMENSION_X) >= maxX || Balls[i].pX  - ((float)RADIUS/MEADOWDIMENSION_X) <= minX) /* Ukoliko do kolizije dodje menjamo brzinu ovce, i stavljamo indikator da je brzina ovcice vec promenjena. */
         {
             Balls[i].vX = -Balls[i].vX;
-            Balls[i].w_angle = - Balls[i].w_angle;
             colission[i] = NOT_TO_CHECK;
         }
         if(Balls[i].pZ + ((float)RADIUS/MEADOWDIMENSION_Z) >= maxZ || Balls[i].pZ  - ((float)RADIUS/MEADOWDIMENSION_Z) <= minZ)
         {
             Balls[i].vZ = -Balls[i].vZ;
-            Balls[i].w_angle = - Balls[i].w_angle;
             colission[i] = NOT_TO_CHECK;
         }
     }
     
-    for(i=0;i<NumOfSheeps;i++)
+    for(i=0;i<NumOfSheeps;i++)  /* Proveravamo koliziju medju samim ovcicama. */
         for(j=i+1;j<NumOfSheeps;j++)
         {
             if(MEADOWDIMENSION_X*MEADOWDIMENSION_X*(Balls[i].pX-Balls[j].pX)*(Balls[i].pX-Balls[j].pX) +
                  MEADOWDIMENSION_Z*MEADOWDIMENSION_Z*(Balls[i].pZ-Balls[j].pZ)*(Balls[i].pZ-Balls[j].pZ) - RADIUS*RADIUS*2*2 < EPSILON)  
             {
-                if(colission[i])
+                if(colission[i]) /* Ako joj je vec menjana brzina, ne moramo ovde to da radimo. */
                 {
                    Balls[i].vX = -Balls[i].vX;
                    Balls[i].vZ = -Balls[i].vZ;
@@ -83,25 +85,29 @@ void colissionDetection()
         }
 }
 
-void drawHitting()
-{
+void drawHitting() /* Crtanje dogadjaja sa zatvarajucim objektom u toku iscrtavanja zatvarajuce putanje. */
+{                 /*  Bez samog iscrtavanja putanje, samo pomocna crvena tackica na terenu na tekucoj poziciji i efekat zasipanja travom (kao metkici). */
     int i;
-    static int even_odd = 0, max_cur = 1, max_t = 10;
-    float step = 1;
-    glDisable(GL_LIGHTING);
+    const static int max_t = 10;  /* Maksimalan broj travcica - metkica koje se mogu iscrtati u bilo kom pozivu. */
+    static int even_odd = 0; /* Jos jedan parametar za zasipanje trave - zavisi od poziva funkcije. Zahvaljujuci njemu imamo efekat kretanja travcica */
+    const float step = 1;  /* Pomocna konstanta za izracunavanje rastojanja izmedju dva metkica. */
+
+    glDisable(GL_LIGHTING); /* Crtanje pomocne crvene tackice. */
     glDisable(GL_LIGHT0);
     glColor3f(1, 0, 0);
-    glPointSize(2);
+    glPointSize(3);
     glBegin(GL_POINTS);
-    glVertex3f(Closer.pX, 1.1, Closer.pZ);
+       glVertex3f(Closer.pX, 1.1, Closer.pZ);
     glEnd();
-    glColor3f(0, 0.78, 0);
+    
+    glColor3f(0, 0.78, 0);  /* Zasipanje trave. */
     glPointSize(2.5);
     glBegin(GL_POINTS);
-    for (i = 0; i < max_cur; i++)
-        glVertex3f(Closer.pX - 0.15, Closer.pY - even_odd * 0.5 * step - i * step - 1.3, Closer.pZ);
+       for (i = 0; i < max_cur; i++)
+          glVertex3f(Closer.pX - 0.15, Closer.pY - even_odd * 0.5 * step - i * step - 1.3, Closer.pZ);
     glEnd();
-    if (max_cur < max_t)
+
+    if (max_cur < max_t) /* Azuriranje parametara za taj efekat za sledeci poziv. */
         max_cur++;
     if (even_odd)
         even_odd = 0;
@@ -110,13 +116,14 @@ void drawHitting()
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
 }
-void drawHittingPath()
+
+void drawHittingPath() /* Omotac funkcija za iscrtavanje zatvarajuce putanje - pre samog crtanja putanje vrsi neophodne provere. */
 {
-    static int firstCall = 1;
-    static POINT turns[4];
-    static int numberOfTurns = 0;
-    static char currentDir = 0;
-    if(firstCall)
+    static int firstCall = 1; /* Indikator da li je tek pocelo iscrtavanje zatvarajuce putanje. */
+    static POINT turns[4];    /* Prva tacka na putanji + tacke skretanja. */
+    static int numberOfTurns = 0; /* Ukupan broj tacaka skretanja + prva tacka na putanji. */
+    static char currentDir = 0;  /* Dosadasnji pravac i smer kretanja - za detekciju skretanja. */
+    if(firstCall)  /* Ako je tek pocelo iscrtavanje, proverava se da li je krenuo od ivice i inicijalizuju se parametri. */
     {
        if( Closer.pX != minX &&
            Closer.pX != maxX &&
@@ -126,20 +133,20 @@ void drawHittingPath()
             hit = 0;
             return;
         }
-       turns[0].pX = Closer.pX;
+        turns[0].pX = Closer.pX; /* Belezimo prvu tacku na nasoj putanji. */
         turns[0].pY = 1.1;
         turns[0].pZ = Closer.pZ;
 
-        numberOfTurns = 1;
+        numberOfTurns = 1;      /* Azuriramo da imamo 1 relevantan element u nizu turns - prva tacka. */
 
-        currentDir = curDir;
-        firstCall = 0;
+        currentDir = curDir;    /* Belezimo tekuci pravac i smer kretanja zatvrajuces objekta. */
+        firstCall = 0;          /* Menjamo indikator da se ne bi tokom crtanja ulazilo u ovu granu. */
        return;
     }
 
-    else if (currentDir != 0 && curDir != currentDir)
+    else if (currentDir != 0 && curDir != currentDir) /* Proveravamo da li je doslo do promene pravca i/ili smera. */
     {
-        if((curDir == 'u' && currentDir == 'd') ||
+        if((curDir == 'u' && currentDir == 'd') ||    /* Ako pokusavamo da idemo u suprotnom smeru, ponistava se iscrtavanje. */
            (curDir == 'd' && currentDir == 'u') ||
            (curDir == 'l' && currentDir == 'r') ||
            (curDir == 'r' && currentDir == 'l'))
@@ -149,21 +156,23 @@ void drawHittingPath()
             currentDir = 0;
             numberOfTurns = 0;
             hit = 0;
+            max_cur = 1;
         }
-        if(numberOfTurns == 4)
+        if(numberOfTurns == 4)  /* Ako je doslo do previse skretanja, takodje ponistavamo iscrtavanje. */
         {
             firstCall = 1;
             curDir = 0;
             currentDir = 0;
             numberOfTurns = 0;
             hit = 0;
+            max_cur = 1;
         }
-        turns[numberOfTurns].pX = Closer.pX;
+        turns[numberOfTurns].pX = Closer.pX; /* Inace, belezimo tacku na kojoj smo skrenuli. */
         turns[numberOfTurns].pY = 1.1;
         turns[numberOfTurns].pZ = Closer.pZ;
 
-        switch(curDir)
-        {
+        switch(curDir) /* Zato sto smo se vec pomerili po jednoj koordinati od tacke,  */
+        {             /* jedna trenutna koordinata nije validna, zato moramo u zavisnosti od pravca i smera kretanja da ispravimo vrednost. */
             case 'l':
                 turns[numberOfTurns].pX += Closer.vX;
                 break;
@@ -182,18 +191,17 @@ void drawHittingPath()
         currentDir = curDir;
     }
 
-    if((currentDir == 0 && ( Closer.pX < minX || Closer.pX > maxX ||
-        Closer.pZ < minZ || Closer.pZ > maxZ)) ||
-        stepTest(turns,numberOfTurns))
+    if(stepTest(turns,numberOfTurns)) /* Proveravamo da nam ovca nije nagazila na putanju. Ako jeste, ponistavamo iscrtavanje. */
     {
         firstCall = 1;
         curDir = 0;
         currentDir = 0;
         numberOfTurns = 0;
         hit = 0;
+        max_cur = 1;
     }
 
-    if(currentDir != 0 && ( Closer.pX >= maxX ||
+    if(currentDir != 0 && ( Closer.pX >= maxX ||  /* Ako smo vec dosli na kraj iscrtavanja putanje, proveravamo da li su zatvorene nove povrsine i da li se daju novi poeni. */
            Closer.pX <= minX ||
             Closer.pZ >= maxZ ||
            Closer.pZ <= minZ))
@@ -208,17 +216,18 @@ void drawHittingPath()
         currentDir = 0;
         numberOfTurns = 0;
         hit = 0;
+        max_cur = 1;
     }
 
     if(currentDir == 0)
         currentDir = curDir;
-    justDrawHittingPath(turns,numberOfTurns);
+    justDrawHittingPath(turns,numberOfTurns); /* Funkcija koja bas iscrtava putanju, definicija ispod. Saljemo joj tacke skretanja. */
 
 }
 
 void justDrawHittingPath(POINT* turns, int numberOfTurns)
 {
-    glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHTING); /* Podesavamo boju, da bude linija isprekidana i u skladu sa tackama skretanja crtamo izlomljenu liniju. */
     glDisable(GL_LIGHT0);
     glColor3f(.4,0.78,.4);
 
@@ -236,7 +245,7 @@ void justDrawHittingPath(POINT* turns, int numberOfTurns)
     glEnable(GL_LIGHT0);
 }
 
-int stepTest(POINT* turns, int length)
+int stepTest(POINT* turns, int length) /* Test funkcija koja proverava da li je ovcica nagazila na nasu putanju. */
 {
     POINT closerPosition;
     closerPosition.pX = Closer.pX;
@@ -246,13 +255,13 @@ int stepTest(POINT* turns, int length)
     for(i=0;i<NumOfSheeps;i++)
     {
         if(fabs((double) Closer.pX - Balls[i].pX) <  RADIUS*GlobalXSize && fabs((double) Closer.pZ - Balls[i].pZ) < RADIUS*GlobalZSize)
-        {
+        {   /* Prvo provera da nismo kosom presli preko i-te ovce, ako jesmo, napustamo igru. */
             printf("Presli ste preko ovce\n\nKRAJ IGRE\n");
             glDeleteTextures(1,&textureNames);
             exit(EXIT_SUCCESS);
         }
        int j;
-       for(j=0;j<length;j++) {
+       for(j=0;j<length;j++) { /* Ovde proveravamo da i-ta ovca nije pregazila nasu putanju. */
            if (checkBetween(turns[j], turns[j + 1], Balls[i]))
                return 1;
        }
@@ -262,7 +271,7 @@ int stepTest(POINT* turns, int length)
     return 0;
 }
 
-int checkBetween(POINT p1, POINT p2, BALL pb)
+int checkBetween(POINT p1, POINT p2, BALL pb) /* Pomocna funkcija za step - test, da li se ovca pb nalazi na duzi p1p2. */
 {
     if(p1.pX == p2.pX && fabs((double)p1.pX - pb.pX) < RADIUS*GlobalXSize){
         if((p1.pZ <= pb.pZ && p2.pZ >= pb.pZ) || (p1.pZ >= pb.pZ && p2.pZ <= pb.pZ))
@@ -274,9 +283,9 @@ int checkBetween(POINT p1, POINT p2, BALL pb)
 
 }
 
-void checkForNewPoints(POINT* turns, int numberOfTurns)
+void checkForNewPoints(POINT* turns, int numberOfTurns) /* Omotac funkcija za proveru da li ima novih zagradjenih povrsina. */
 {
-    switch(numberOfTurns)
+    switch(numberOfTurns) /* U zavisnosti od broja skretanja se poziva razlicita funkcija za proveru i analizu. */
     {
         case 1:
             checkForNewPointsOne(turns);
@@ -288,21 +297,22 @@ void checkForNewPoints(POINT* turns, int numberOfTurns)
             checkForNewPointsThree(turns);
             break;
     }
-    printf("Covered percent %.2lf%% \n",coveredPercent);
-    if(coveredPercent > 100 - NumOfSheeps * PERCENT_PER_SHEEP)
+    printf("Pokriveni procenat:  %.2lf%% \n",coveredPercent); /* Ispisujemo trenutno zatvoren procenat povrsine. */
+    printf("Osvojeno poena: %u \n\n",pointsWon);
+    if(coveredPercent > 100 - NumOfSheeps * PERCENT_PER_SHEEP) /* Provera da nije igrac vec pobedio. */
     {
         printf("Pobeda! BRAVOOO!!!\n");
         winning();
     }
 }
 
-void checkForNewPointsOne(POINT* turns)
+void checkForNewPointsOne(POINT* turns) /* Provera kada nema skretanja na zatvarajucoj putanji. */
 {
-    char check_option, side;
+    char check_option, side; /* Pomocni parametri: check_option koju koordinatu ovaca bi trebalo da proveravamo, side - sa koje strane putanje(ovde duzi) bi trebalo da budu. */
     if(turns[0].pX == Closer.pX)
         check_option = 'x';
     else check_option = 'z';
-    if(check_option == 'x')
+    if(check_option == 'x') /* Na osnovu koordinata prve ovce utvrdjujemo sa koje strane duzi bi trebalo da se nalaze ovce. */
     {
         if(Balls[0].pX < Closer.pX)
            side = 'l';
@@ -314,7 +324,7 @@ void checkForNewPointsOne(POINT* turns)
         else side = 'u';
     }
     int i;
-    for(i=1;i<NumOfSheeps;i++)
+    for(i=1;i<NumOfSheeps;i++) /* Proveravamo polozaj ostalih ovcica, ako jedna nije gde bi trebalo, izlazi se iz funkcije i nema novih bodova. */
     {
         if(check_option == 'x' && side == 'l' && Balls[i].pX >= Closer.pX)
             return;
@@ -325,38 +335,38 @@ void checkForNewPointsOne(POINT* turns)
         else if(check_option == 'z' && side == 'u' && Balls[i].pZ <= Closer.pZ)
             return;
     }
-
+    /* Dosli smo u funkciji do ovde, znaci ima novih pokrivenih povrsina i novih poena. */
     if(check_option == 'x' && side == 'l')
     {
-        coveredPercent += 100*(((maxX - Closer.pX)*(maxZ - minZ)) / 4.0);
-        pointsWon += (maxX - Closer.pX) / (maxX - minX);
-        maxX = Closer.pX;
+        coveredPercent += 100*(((maxX - Closer.pX)*(maxZ - minZ)) / WHOLE_MEADOW_SURFACE);  /* Azuriramo procenat i bodove. */
+        pointsWon += ((maxX - Closer.pX) / (maxX - minX)) * 1000;
+        maxX = Closer.pX;  /* I na kraju, naravno, novu granicu slobodne povrsine za ovce. Slicno i za ostale slucajeve. */
     }
     else if(check_option == 'x' && side == 'u')
     {
-        coveredPercent += 100*(((Closer.pX - minX) * (maxZ - minZ)) / 4.0);
-        pointsWon += (Closer.pX - minX) / (maxX - minX);
+        coveredPercent += 100*(((Closer.pX - minX) * (maxZ - minZ)) / WHOLE_MEADOW_SURFACE);
+        pointsWon += ((Closer.pX - minX) / (maxX - minX)) * 1000;
         minX = Closer.pX;
     }
     else if(check_option == 'z' && side == 'l')
     {
-        coveredPercent += 100*(((maxZ - Closer.pZ)*(maxX- minX)) / 4.0);
-        pointsWon += (maxZ - Closer.pZ) / (maxZ - minZ);
+        coveredPercent += 100*(((maxZ - Closer.pZ)*(maxX- minX)) / WHOLE_MEADOW_SURFACE);
+        pointsWon += ((maxZ - Closer.pZ) / (maxZ - minZ)) * 1000;
         maxZ = Closer.pZ;
     }
     else if(check_option == 'z' && side == 'u')
     {
-        coveredPercent += 100*(((Closer.pZ -  minZ)*(maxX- minX)) / 4.0);
-        pointsWon += (Closer.pZ - minZ) / (maxZ - minZ);
+        coveredPercent += 100*(((Closer.pZ -  minZ)*(maxX- minX)) / WHOLE_MEADOW_SURFACE);
+        pointsWon += ((Closer.pZ - minZ) / (maxZ - minZ)) * 1000;
         minZ = Closer.pZ;
     }
 }
 
-void checkForNewPointsTwo(POINT* turns)
+void checkForNewPointsTwo(POINT* turns) /* Provera kada imamo jedno skretanje na nasoj putanji. */
 {
-     float check_x = turns[1].pX, check_z = turns[1].pZ;
-     char x_side, z_side;
-     if(turns[0].pX == minX)
+     float check_x = turns[1].pX, check_z = turns[1].pZ; /* X i Z koordinate koje koristimo u proveri. Iako su vec zabelezene u turns[1], ovo radimo zbog citljivosti. */
+     char x_side, z_side; /* Sa koje strane bi trebalo da se nalaze ovcice. */
+     if(turns[0].pX == minX)  /* Ovde te parametri ne zavise od ispitivanja prve ovcice kao u funkciji ...One, nego od same putanje. */
      {
          x_side = 'l';
          if(Closer.pZ > turns[1].pZ)
@@ -386,7 +396,7 @@ void checkForNewPointsTwo(POINT* turns)
      }
 
      int i;
-     for(i=0;i<NumOfSheeps;i++)
+     for(i=0;i<NumOfSheeps;i++) /* Ovde proveravamo da li su sve ovcice tamo gde bi trebalo da budu. */
      {
          if(x_side == 'l' && z_side == 'l')
          {
@@ -409,38 +419,45 @@ void checkForNewPointsTwo(POINT* turns)
                  return;
          }
      }
+     
+     /* Dosli smo do ovde, znaci ima novih poena. U zavisnosti od pomocnih parametara azuriramo bodove, procenat i nove granice. */
+     /* Ovo je smeliji i pametniji potez, zato ga nagradjujemo sa vise poena. */
     if(x_side == 'l' && z_side == 'l')
     {
-        coveredPercent += 100.0*(((maxZ - turns[1].pZ)*(maxX - minX) + (maxX - turns[1].pX)*(turns[1].pZ - minZ))/4.0);
+        coveredPercent += 100.0*(((maxZ - turns[1].pZ)*(maxX - minX) + (maxX - turns[1].pX)*(turns[1].pZ - minZ))/WHOLE_MEADOW_SURFACE);
+        pointsWon += (((maxZ - turns[1].pZ)*(maxX - minX) + (maxX - turns[1].pX)*(turns[1].pZ - minZ))/WHOLE_MEADOW_SURFACE) * 1500; 
         maxX = check_x;
         maxZ = check_z;
     }
     if(x_side == 'l' && z_side == 'u')
     {
-        coveredPercent += 100.0*(((turns[1].pZ - minZ)*(maxX-minX) + (maxZ - turns[1].pZ)*(maxX - turns[1].pX) )/4.0);
+        coveredPercent += 100.0*(((turns[1].pZ - minZ)*(maxX-minX) + (maxZ - turns[1].pZ)*(maxX - turns[1].pX) )/WHOLE_MEADOW_SURFACE);
+        pointsWon += (((turns[1].pZ - minZ)*(maxX-minX) + (maxZ - turns[1].pZ)*(maxX - turns[1].pX) )/WHOLE_MEADOW_SURFACE) * 1500;
         maxX = check_x;
         minZ = check_z;
     }
     if(x_side == 'u' && z_side == 'l')
     {
-        coveredPercent += 100.0*(((maxZ - turns[1].pZ)*(maxX - minX) + (turns[1].pZ - minZ)*(turns[1].pX - minX) )/4.0);
+        coveredPercent += 100.0*(((maxZ - turns[1].pZ)*(maxX - minX) + (turns[1].pZ - minZ)*(turns[1].pX - minX) )/WHOLE_MEADOW_SURFACE);
+        pointsWon += (((maxZ - turns[1].pZ)*(maxX - minX) + (turns[1].pZ - minZ)*(turns[1].pX - minX) )/WHOLE_MEADOW_SURFACE) * 1500;
         minX = check_x;
         maxZ = check_z;
     }
     if(x_side == 'u' && z_side == 'u')
     {
-        coveredPercent += 100*(((turns[1].pZ - minZ)*(maxX - minX) + (turns[1].pX - minX) * (maxZ - turns[1].pZ))/4.0);
+        coveredPercent += 100*(((turns[1].pZ - minZ)*(maxX - minX) + (turns[1].pX - minX) * (maxZ - turns[1].pZ))/WHOLE_MEADOW_SURFACE);
+        pointsWon += (((turns[1].pZ - minZ)*(maxX - minX) + (turns[1].pX - minX) * (maxZ - turns[1].pZ))/WHOLE_MEADOW_SURFACE) * 1500;
         minX = check_x;
         minZ = check_z;
     }
 
 }
 
-void checkForNewPointsThree(POINT* turns)
+void checkForNewPointsThree(POINT* turns) /* Provera u slucaju da smo na putanji imali dva skretanja. */
 {
-    if(turns[0].pX != Closer.pX && turns[0].pZ != Closer.pZ)
+    if(turns[0].pX != Closer.pX && turns[0].pZ != Closer.pZ) /* Ako smo se vratili u istu tacku od koje smo poceli, nista nam se ne racuna. */
         return;
-    char check_parameter, side, range;
+    char check_parameter, side, range; 
 
     if(turns[0].pX == minX)
     {
