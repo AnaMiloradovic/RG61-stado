@@ -1,8 +1,9 @@
+/* Pomocni kod koji iscrtava ovcu - glavnog lika u nasoj igrici. */
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <math.h>
 
-/* Dobra stara matematicka konstanta PI, jedna jako mala vrednost EPSILON 
+/* Matematicka konstanta PI, jedna jako mala vrednost EPSILON 
 i R- poluprecnik loptica od kojih pravimo telo ovce.(vunu) */
 #define PI 3.1415926535
 #define EPSILON 0.01
@@ -29,21 +30,21 @@ void setEyeMaterial();
 void setWoolMaterial();
 int main(int argc, char **argv)
 {
-    /* Inicijalizuje se GLUT. */
+    /* Inicijalizacija GLUT-a. */
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 
-    /* Kreira se prozor. */
+    /* Prozor i njegova podesavanja. */
     glutInitWindowSize(300, 300);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow(argv[0]);
+    glutCreateWindow("Sheep 🐑");
 
-    /* Registruju se callback funkcije. */
+    /* Registrujemo callback funkcije. */
     glutKeyboardFunc(on_keyboard);
     glutReshapeFunc(on_reshape);
     glutDisplayFunc(on_display);
 
-    /* Obavlja se OpenGL inicijalizacija. */
+    /* OpenGL inicijalizacija - zadajemo boju pozadine i ukljucujemo testiranje z- koordinata. */
     glClearColor(0, 0, 0, 0);
     glEnable(GL_DEPTH_TEST);
 
@@ -90,8 +91,8 @@ static void on_reshape(int width, int height)
 void inline addSphereCenterBody(float x, float y) /* Dodavanje loptice vune na sredisnji deo tela. */
 {
     glPushMatrix();
-    glTranslatef(x,y,0);
-    glutSolidSphere(0.3,16,16);
+       glTranslatef(x,y,0);
+       glutSolidSphere(0.3,16,16);
     glPopMatrix();
 }
 
@@ -104,7 +105,7 @@ void inline addSphereBodySymetric(float x, float y, float z)  /* Bocno dodavanje
           glutSolidSphere(0.3,16,16);
        glPopMatrix();
        glPushMatrix();
-       glScalef(1,1,-1);
+          glScalef(1,1,-1);
           glTranslatef(0,0,z);
           glutSolidSphere(0.3,16,16);
        glPopMatrix();
@@ -114,21 +115,21 @@ void inline addSphereBodySymetric(float x, float y, float z)  /* Bocno dodavanje
 void drawLeg(float lX,float lZ, float backLeg, float oppositeSide) /* Iscrtavanje noge. */
 {
      glPushMatrix();
-     glScalef(1,1,oppositeSide);
-     glTranslatef(lX,0,lZ);
-     glRotatef(backLeg*20,-1,0,1);
-     float u,h;
-     glBegin(GL_TRIANGLE_STRIP);
-     for(h=0;h>= -0.5;h-=PI/20)
-        for(u=0;u<2*PI+EPSILON;u+=PI/20)
-        {
-            glNormal3f(cos(u),0,sin(u));
-            glVertex3f(R*cos(u),h,R*sin(u));
-            glVertex3f(R*cos(u),h-PI/20,R*sin(u));
-        }
-    glEnd();
-    glTranslatef(0,-0.63,0);
-    glutSolidSphere(R,16,16);
+        glScalef(1,1,oppositeSide);
+        glTranslatef(lX,0,lZ);
+        glRotatef(backLeg*20,-1,0,1);
+        float u,h;
+        glBegin(GL_TRIANGLE_STRIP);
+        for(h=0;h>= -0.5;h-=PI/20)
+           for(u=0;u<2*PI+EPSILON;u+=PI/20)
+           {
+               glNormal3f(cos(u),0,sin(u));
+               glVertex3f(R*cos(u),h,R*sin(u));
+               glVertex3f(R*cos(u),h-PI/20,R*sin(u));
+           }
+        glEnd();
+        glTranslatef(0,-0.63,0);
+        glutSolidSphere(R,16,16);
     glPopMatrix();
 }
 
@@ -143,35 +144,36 @@ void drawHead()  /* Iscrtavanje glave. */
     /* Oci. */
     setEyeMaterial();
     glPushMatrix();
-    glTranslatef(0,0.27*cos(PI/4) - EPSILON,0);
-    glPushMatrix();
-    glTranslatef(0.27*0.5 - EPSILON,0,0.27*0.5 - EPSILON);
-    glutSolidSphere(0.07,16,16);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(-(0.27*cos(PI/4)*sin(PI/10) - EPSILON),0,0.27*cos(PI/4)*cos(PI/10) - EPSILON);
-    glutSolidSphere(0.07,16,16);
-    glPopMatrix();
+       glTranslatef(0,0.27*cos(PI/4) - EPSILON,0);
+       glPushMatrix();
+          glTranslatef(0.27*0.5 - EPSILON,0,0.27*0.5 - EPSILON);
+          glutSolidSphere(0.07,16,16);
+       glPopMatrix();
+       glPushMatrix();
+          glTranslatef(-(0.27*cos(PI/4)*sin(PI/10) - EPSILON),0,0.27*cos(PI/4)*cos(PI/10) - EPSILON);
+          glutSolidSphere(0.07,16,16);
+       glPopMatrix();
     glPopMatrix();
     
     /* Tri vunene kuglice na iznad ociju. */
     setWoolMaterial();
-    glPushMatrix();
-    glTranslatef(0,0.27,0);
-    glutSolidSphere(0.1,16,16);
+    glPushMatrix();  /* Prva kuglica, na sredini. */
+       glTranslatef(0,0.27,0);
+       glutSolidSphere(0.1,16,16);
     glPopMatrix();
-    glPushMatrix();
-    glTranslatef(cos(PI/5)*cos(PI/10)*0.27,cos(PI/10)*0.27,0);
-    glutSolidSphere(0.1,16,16);
+    glPushMatrix();  /* Druga kuglica, desno. */
+       glTranslatef(cos(PI/5)*cos(PI/10)*0.27,cos(PI/10)*0.27,0);
+       glutSolidSphere(0.1,16,16);
     glPopMatrix();
-    glPushMatrix();
-    glTranslatef(-cos(PI/5)*cos(PI/10)*0.27,cos(PI/10)*0.27,0.1);
-    glutSolidSphere(0.1,16,16);
+    glPushMatrix();  /* Treca kuglica, levo. */
+       glTranslatef(-cos(PI/5)*cos(PI/10)*0.27,cos(PI/10)*0.27,0.1);
+       glutSolidSphere(0.1,16,16);
     glPopMatrix();
 }
 
-void drawBody()  /* Crtanje tela. Znam da izgleda rogobatno, ali svaka 'uniformna' implementacija(tj. po nekoj petlji i sa nekim sistematicnim */
-{                /* pozivanjem rand() funkcije je davala mnogo manje lep izgled ovce. */
+void drawBody()  /* Crtanje tela. Znam da izgleda rogobatno, ali svaka 'ciljana' implementacija(tj. po nekoj petlji i sa nekim sistematicnim */
+{                /* pozivanjem rand() funkcije je davala mnogo manje lep izgled ovce. 
+                    Ovo je pravljeno naizmenicno izmenom parametara, pa ponovnim prevodjenjem programa. */
     addSphereCenterBody(-0.2,0);
     addSphereCenterBody(-0.4,0.15);
     addSphereCenterBody(-0.15,0.2);
@@ -239,7 +241,10 @@ void setWoolMaterial()  /* Materijal za vuneno telo. */
 
 void draw_object()  /* Funkcija koja kompletno iscrtava ovcu. */
 {
-    glScalef(0.5,0.5,0.5);
+    glScalef(0.5,0.5,0.5); /* Sve delove ovce posmatramo kao udeo lopte u koju je uklapamo. */
+    /* Ovo je bio deo koda koji iscrtava crvenu zicanu sferu - znacilo dok smo pravili model ovce,
+       da bi smo je uklopili u sferu zadatog poluprecnika (i time funkcije za detekciju kolizije bile bez problema primenjive i na nju) */
+    /*------*/
      /* Prvo privremeno gasimo svetlo samo dok iscrtamo pomocnu zicanu sferu. */
     /*glDisable(GL_LIGHT0);
     glDisable(GL_LIGHTING);
@@ -249,34 +254,27 @@ void draw_object()  /* Funkcija koja kompletno iscrtava ovcu. */
     glEnable(GL_LIGHTING);*/
     /*-----*/
 
-    setSkinMaterial();
-    drawLeg(0.1,-0.07,1,1);
+    setSkinMaterial(); /* Crtamo prvo kozne delove - noge i glavu (u okviru funkcije za icrtavanje glave ce se promeniti materijal, */
+    drawLeg(0.1,-0.07,1,1);                                                          /* jer cemo i na glavi iscrtati vunene delove. */
     drawLeg(0.1,0.1,1,-1);
     drawLeg(-0.3,-0.07,-1,1);
     drawLeg(-0.3,0.1,-1,-1);
-    
     glPushMatrix();
        drawHead();
     glPopMatrix();
 
-    drawBody();    
+    drawBody(); /* Sad crtamo vuneno telo. */   
 }
 
 static void on_display(void)
 {
-    /* Pozicija svetla (u pitanju je direkcionalno svetlo). */
+    /* Parametri svetla na sceni - ovde je direkciono svetlo. */
     GLfloat light_position[] = { 1, 1, 1, 0 };
-
-    /* Ambijentalna boja svetla. */
     GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
-
-    /* Difuzna boja svetla. */
     GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
-
-    /* Spekularna boja svetla. */
     GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
 
-    /* Brise se prethodni sadrzaj prozora. */
+    /* Cistimo prethodni sadrzaj prozora. */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /* Podesava se vidna tacka. */
@@ -284,7 +282,7 @@ static void on_display(void)
     glLoadIdentity();
     gluLookAt(sin(angle)*2, 0, cos(angle)*2, 0, 0, 0, 0, 1, 0);
 
-    /* Ukljucuje se osvjetljenje i podesavaju parametri svetla. */
+    /* Ukljucuje se osvjetljenje i registruju parametri svetla. */
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
@@ -294,7 +292,7 @@ static void on_display(void)
 
     /* Kreira se objekat. */
     glPushMatrix();
-    draw_object();
+       draw_object();
     glPopMatrix();
 
     /* Nova slika se salje na ekran. */

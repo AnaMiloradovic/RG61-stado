@@ -1,92 +1,90 @@
+/* Izvorna datoteka sa implementacijama funkcija koje iscrtavaju objekte u igri i funkcijama za teksture. */
 #include <GL/glut.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 
-#include "colors.h" //Ovde cuvamo boje koje koristimo u igri
-#include "inits.h" //Ovde nam se nalaze deklaracije inicijalizacionih funkcija
-#include "callbacks.h" //Callback funckije
+#include "inits.h" /* Neophodno zbog deklaracije strukture zatvarajuceg objekta i strukture ovaca. */
 #include "draw_objects.h"
-#include "light_and_materials.h"
-#include "sheep.h"
-#include "image.h"
+#include "light_and_materials.h" /* Neophodno zbog funkcija koje postavljaju materijale na nase objekte. */
+#include "sheep.h" /* Ovde nam je deklarisana funkcija za iscrtavanje ovcice. */
+#include "image.h" /* Biblioteka asistenata sa kursa "Racunarska grafika" - za upotrebu tekstura. */
 
-extern BALL Balls[];
-extern CLOSER Closer;
-/* HACK: extern SURFACE ClosedSurfaces[MAX_POSSIBLE_CLOSED_SURFACES];
- HACK: extern int NumOfClosedSurfaces;   */
-extern int NumOfSheeps, Level, ifJustSheeps;
-extern int on_going;
-extern float minX,maxX,minZ,maxZ;
+/* Deklaracije neophodnih promenljivih iz drugih datoteka. */
+extern BALL Balls[];  /* Niz struktura ovaca - samo naziv ostao, jer je igra na pocetku razvijana sa kuglama. */
+extern CLOSER Closer; /* Promenljiva - struktura zatvarajuceg objekta. (kose) */
+extern int NumOfSheeps;  /* Broj ovaca u igri. */
+extern float minX,maxX,minZ,maxZ; /* Unutar ovih granica X i Z koordinata je slobodna povrsina za ovce. */
 
-/*--- Jedinice u svetskom koordinatnom sistemu */
-extern double GlobalXSize;
-extern double GlobalYSize;
-extern double GlobalZSize;
+/*--- Jedinice u svetskom koordinatnom sistemu. */
+extern double GlobalXSize;    /* Zapravo, vrednosti ove 3 promenljive su 1/MEADOW_DIMENSION_(X|Y|Z). Posto su nam dok iscrtavamo po terenu skoro */
+extern double GlobalYSize;    /* sve dimenzije izrazene u odnosu na dimenzije terena (tj. nisu dimenzije svetskog koordinatnog sistema), mnozeci ih sa */
+extern double GlobalZSize;    /* ovim promenljivama mi zapravo vrsimo implicitnu inverznu transformaciju na veoma citljiv nacin koji moze lepo da se tumaci. */
 /*---   */
 
-GLuint textureNames;
+GLuint textureNames; /* Promenljiva u kojoj cuvamo generisano 'ime' teksture koju koristimo. */
 
-void drawMeadow()
+void drawMeadow() /* Funkcija za iscrtavanje livade - terena za igru. */
 {
-    glScalef(MEADOWDIMENSION_X, MEADOWDIMENSION_Y, MEADOWDIMENSION_Z);
-    glutSolidCube(2);
+    glScalef(MEADOWDIMENSION_X, MEADOWDIMENSION_Y, MEADOWDIMENSION_Z); /* Od ovog skaliranja su sve dalje dimenzije izrazene u odnosu na njih.
+      Pojam dimenzije terena nam je zapravo polovina dimenzije (polovina duzine ili sirine), da bi smo posle sve koordinate polozaja posmatrali u opsegu [-1,1]. */
+    glutSolidCube(2);          /* Ako hocemo da koristimo svetske koordinate, te vrednosti mnozimo sa GLobal*Size promenljivama. */
+
+    /* Sa prethodnim glutSolidCube pozivom smo iscrtali sam teren za ovcice. Sada treba da iscrtamo njegove ivice. */
 
     glPushMatrix();
-    glTranslatef(1 + 0.5 * 0.5*GlobalXSize,0,0); /*TODO: Da se iskomentarise*/
-    glScalef(0.5 * GlobalXSize,1 * GlobalYSize, 2 * (1 + 0.5*GlobalZSize) );
-    glutSolidCube(1);
+       glTranslatef(1 + 0.5 * 0.5*GlobalXSize,0,0); /* Transliramo na ivicu terena (ovde na desnu duzu ivicu terena). Translacija za citavu polovinu duzine + pola sirine ivice koju cemo nacrtati.(koja ce biti bas 0.5, zbog cega koristimo GlobalXSize).*/
+       glScalef(0.5 * GlobalXSize,1 * GlobalYSize, 2 * (1 + 0.5*GlobalZSize) ); /* I za samu dimenziju ivica ce nam biti lakse da navedemo stvarne dimenzije kakve hocemo. */
+       glutSolidCube(1); /* Posto smo skalirali sve dimenzije kako nam odgovaraju, crtamo transformisanu 'kocku' (zapravo kvadar) koji ce imati zeljene dimenzije. */
+    glPopMatrix();   /* Isti je princip i za ostale tri ivice. */
+
+    glPushMatrix();
+       glTranslatef(- 1 - 0.5 * 0.5*GlobalXSize,0,0); 
+       glScalef(0.5 * GlobalXSize, GlobalYSize , 2 * (1 + 0.5*GlobalZSize) );
+       glutSolidCube(1);
     glPopMatrix();
 
     glPushMatrix();
-    drawDecorativeGrass(1,0);
+       glTranslatef(0,0,1 + 0.5 * 0.5*GlobalZSize);
+       glScalef(2 * (1 + 0.5 * GlobalXSize), GlobalYSize , 0.5 * GlobalZSize);
+       glutSolidCube(1);
     glPopMatrix();
+
     glPushMatrix();
-    glTranslatef(- 1 - 0.5 * 0.5*GlobalXSize,0,0); /*TODO: Da se iskomentarise*/
-    glScalef(0.5 * GlobalXSize, GlobalYSize , 2 * (1 + 0.5*GlobalZSize) );
-    glutSolidCube(1);
-    glPopMatrix();
-    glPushMatrix();
-    drawDecorativeGrass(-1,0);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(0,0,1 + 0.5 * 0.5*GlobalZSize); /*TODO: Da se iskomentarise*/
-    glScalef(2 * (1 + 0.5 * GlobalXSize), GlobalYSize , 0.5 * GlobalZSize);
-    glutSolidCube(1);
-    glPopMatrix();
-/*
-    glPushMatrix();
-    drawDecorativeGrass(1,1);
-    glPopMatrix();*/
-    glPushMatrix();
-    glTranslatef(0,0, - 1 - 0.5 * 0.5 * GlobalZSize); /*TODO: Da se iskomentarise*/
-    glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
-    glutSolidCube(1);
+       glTranslatef(0,0, - 1 - 0.5 * 0.5 * GlobalZSize);
+       glScalef(2 * (1 + 0.5 * GlobalXSize),GlobalYSize, 0.5 * GlobalZSize);
+       glutSolidCube(1);
     glPopMatrix();
     
+    /* Iscrtavanje dekorativne trave duz kracih ivica terena. Bice pojasnjeno kod definicije odgovarajuce funkcije. */
+    glPushMatrix();
+       drawDecorativeGrass(1,0);
+    glPopMatrix();
+
+    glPushMatrix();
+       drawDecorativeGrass(-1,0);
+    glPopMatrix();
+         
+    /* Inicijalizacija i primena teksture na povrsinu gde ovcice trce. */
     initializeTexture();
     applyTexture(-1,1,-1,1);
-    /*glPushMatrix();
-    drawDecorativeGrass(-1,1);
-    glPopMatrix();*/
-
 }
 
-void drawHedge(float minR, float maxR, float fixed, int indX)
-{
-    setCloserMaterial();
-    glPushMatrix();
-    if(indX)
-        glTranslatef((maxR + minR)/2.0,5,fixed);
-    else
-        glTranslatef(fixed,5,(maxR + minR)/2.0);
+void drawHedge(float minR, float maxR, float fixed, int indX) /* Funkcija za iscrtavanje ogradice oko ovcica na kraju partije. */
+{                                                            /* Namerno su grede pomalo iskrivljene, da bi izgledalo vernije. */
+    setCloserMaterial(); /* Isti materijal se koristi kao i za drsku kose. */
 
-    glPushMatrix();
-    if(indX)
-    {
-        glTranslatef(-(maxR-minR)*0.4,0,0);
-        //glRotatef(1,0,0,1);
+    glPushMatrix();  /* Transliramo koordinatni sistem u drugi koordinatni pocetak u odnosu na koji cemo da crtamo. */
+       if(indX)
+           glTranslatef((maxR + minR)/2.0,5,fixed);
+       else
+           glTranslatef(fixed,5,(maxR + minR)/2.0);
+
+       glPushMatrix(); 
+          if(indX)       /* Leva (ili gornja ako crtamo duz z-ose) uspravna greda. */
+          {
+           glTranslatef(-(maxR-minR)*0.4,0,0);
     }else {
         glTranslatef(0,0,-(maxR-minR)*0.4);
         glRotatef(2,0,1,0);
@@ -185,23 +183,11 @@ void drawObjects()
     double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y);
     for(i=0;i< NumOfSheeps;i++)
     {
-        if(ifJustSheeps)
-        {
             glPushMatrix();
             glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
             glScalef(GlobalXSize,GlobalYSize,GlobalZSize);
             drawSheep(Balls[i].angle/180*PI);
             glPopMatrix();
-        } else
-        {
-            setBallMaterial(); // Postavljamo materijal na kugle
-            glPushMatrix();
-            glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
-            glScalef(RADIUS * GlobalXSize,2, RADIUS * GlobalZSize);
-            glRotatef(Balls[i].angle,1,0,0);
-            glutSolidSphere(1,20,20);
-            glPopMatrix();
-        }
     }
 }
 

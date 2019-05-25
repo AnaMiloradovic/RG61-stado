@@ -1,6 +1,4 @@
-/* Skoljka programa u okviru kog sam implementirala modele koje sam potom ukljucivala u igricu.
-   Lepo podesena scena, jednostavno koriscenje, sa implementiranim rotiranjem kamere oko objekta da se moze pogledati iz vise uglova.
-   Ostavljeno da se potencijalno svakome nadje na usluzi. */
+/* Pomocni kod koji iscrtava ogradu, slican uz dodatnu adaptaciju koriscen u igrici. */
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <math.h>
@@ -22,14 +20,14 @@ void setMaterial();  /* Funkcija koja ce nam postaviti materijal na nas model.*/
 void drawObject();   /* Funkcija koja iscrtava ciljni objekat. */
 int main(int argc, char **argv)
 {
-    /* Inicijalizacija GLUT-a. */
+   /* Inicijalizacija GLUT-a. */
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 
     /* Prozor i njegova podesavanja. */
     glutInitWindowSize(300, 300);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow(argv[0]);
+    glutCreateWindow("Hedge");
 
     /* Registrujemo callback funkcije. */
     glutKeyboardFunc(on_keyboard);
@@ -79,7 +77,7 @@ static void on_reshape(int width, int height)
     gluPerspective(60, (float) width / height, 1, 10);
 }
 
-void setMaterial()  /* Parametri materijala su stavljeni na neke default-ne vrednosti, pri konkretnoj primeni ih treba podesiti. */
+void setMaterial()  /* Postavljamo drveni materijal. */
 {
     GLfloat materialAmbient[] = {0.3,0.1,0.1,1};
     GLfloat materialDiffuse[] = {0.4,0.1,0.1,1};
@@ -92,16 +90,68 @@ void setMaterial()  /* Parametri materijala su stavljeni na neke default-ne vred
     glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
-void drawObject()
-{
-    setMaterial();
-    /*
-     * Ovde treba implementirati
-     * crtanje ciljnog objekta.
-     */
+
+
+void drawHedge(float minR, float maxR, int indX) /* Funkcija za iscrtavanje ograde, maxR - minR je duzina ograde, */
+{                                                /* indX - indikator duz koje dimenzije zelimo da nam se iscrta ograda, indX - 0 - duz Z - ose, inace duz X - ose. */
+    setMaterial();                               /* Delovi ograde su namerno pomalo nakrivljeni, da bi izgledali sto vernije. */
+    glPushMatrix();
+       if(indX) /* Leva (gornja) uspravna letva. */
+       {
+         glTranslatef(-(maxR-minR)*0.6,0,0);
+         glRotatef(5,0,0,1);
+       }else {
+         glTranslatef(0,0,-(maxR-minR)*0.6);
+         glRotatef(5,1,0,0);          
+       }
+       glScalef(0.3,1.5,0.3); 
+       glutSolidCube(1);
+    glPopMatrix();
+    
+    glPushMatrix(); /* Desna (donja) uspravna letva. */
+       if(indX)
+       {
+          glTranslatef((maxR-minR)*0.6,0,0);
+          glRotatef(2,0,0,1);
+       } else{
+          glTranslatef(0,0,(maxR-minR)*0.6);
+          glRotatef(2,1,0,0);
+       }
+       glScalef(0.3,1.5,0.3);
+       glutSolidCube(1);
+    glPopMatrix();
+    
+    glPushMatrix();  /* Gornja poprecna greda. */
+       if(indX)
+       {
+          glTranslatef(0,0.2,0);
+          glRotatef(4,0,0,1);
+          glScalef(2*(maxR-minR),0.15,0.15);
+       }
+       else{
+          glTranslatef(0,0.2,0);
+          glRotatef(4,1,0,0);
+          glScalef(0.15,0.15,2*(maxR-minR));
+       }
+       glutSolidCube(1);
+    glPopMatrix();
+    
+    glPushMatrix();  /* Donja poprecna greda. */
+       if(indX)
+       {
+          glTranslatef(0,-0.25,0);
+          glRotatef(2,0,0,1);
+          glScalef(2*(maxR-minR),0.15,0.15);
+       }else{
+          glTranslatef(0,-0.25,0);
+          glRotatef(2,1,0,0);
+          glScalef(0.15,0.15,2*(maxR-minR));
+       }
+       glutSolidCube(1);
+    glPopMatrix();
 }
 
-static void on_display(void) 
+static void on_display(void)
 {
     /* Parametri svetla na sceni - ovde je direkciono svetlo. */
     GLfloat light_position[] = { 1, 1, 1, 0 };
@@ -109,13 +159,13 @@ static void on_display(void)
     GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
     GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
 
-    /* Cistimp prethodni sadrzaj prozora. */
+    /* Cistimo prethodni sadrzaj prozora. */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     /* Podesava se vidna tacka. */
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(sin(angle)*2, 0, cos(angle)*2, 0, 0, 0, 0, 1, 0);
+    gluLookAt(sin(angle)*5, 0, cos(angle)*5, 0, 0, 0, 0, 1, 0);
     
     /* Ukljucuje se osvjetljenje i registruju parametri svetla. */
     glEnable(GL_LIGHTING);
@@ -126,7 +176,7 @@ static void on_display(void)
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
     
     glPushMatrix();
-       drawObject(); /* Ovde primenjujemo drawObject() funkciju za iscrtavanje. */
+       drawHedge(-0.5,0.5,1); /* Ovde primenjujemo funkciju za iscrtavanje. */
     glPopMatrix();
     
     glutSwapBuffers(); /* Nova slika se salje na ekran. */
