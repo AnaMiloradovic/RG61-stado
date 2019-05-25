@@ -71,6 +71,18 @@ void setCloserMaterial()
     glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
 }
 
+void setLightGrayMaterial() 
+{
+    GLfloat materialCloserAmbient[] = {0.2,0.2,0.2,1};
+    GLfloat materialCloserDiffuse[] = {0.8,0.8,0.8,1};
+    GLfloat materialCloserSpecular[] = {0.9,0.9,0.9,1};
+    GLfloat shininess=10;
+    glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,materialCloserAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,materialCloserDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,materialCloserSpecular);
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
+}
+
 void setLetters()
 {
     GLfloat letters[] = {1,1,1,1};

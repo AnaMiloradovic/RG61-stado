@@ -5,6 +5,6 @@ void setSunLight();
 void setMeadowMaterial();
 void setBallMaterial();
 void setCloserMaterial();
+void setLightGrayMaterial();
 void setLetters();
-/*void setStarMaterial();*/
 #endif

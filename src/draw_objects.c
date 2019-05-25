@@ -11,19 +11,25 @@
 #include "sheep.h" /* Ovde nam je deklarisana funkcija za iscrtavanje ovcice. */
 #include "image.h" /* Biblioteka asistenata sa kursa "Racunarska grafika" - za upotrebu tekstura. */
 
+
 /* Deklaracije neophodnih promenljivih iz drugih datoteka. */
 extern BALL Balls[];  /* Niz struktura ovaca - samo naziv ostao, jer je igra na pocetku razvijana sa kuglama. */
 extern CLOSER Closer; /* Promenljiva - struktura zatvarajuceg objekta. (kose) */
 extern int NumOfSheeps;  /* Broj ovaca u igri. */
 extern float minX,maxX,minZ,maxZ; /* Unutar ovih granica X i Z koordinata je slobodna povrsina za ovce. */
 
+
 /*--- Jedinice u svetskom koordinatnom sistemu. */
 extern double GlobalXSize;    /* Zapravo, vrednosti ove 3 promenljive su 1/MEADOW_DIMENSION_(X|Y|Z). Posto su nam dok iscrtavamo po terenu skoro */
 extern double GlobalYSize;    /* sve dimenzije izrazene u odnosu na dimenzije terena (tj. nisu dimenzije svetskog koordinatnog sistema), mnozeci ih sa */
 extern double GlobalZSize;    /* ovim promenljivama mi zapravo vrsimo implicitnu inverznu transformaciju na veoma citljiv nacin koji moze lepo da se tumaci. */
-/*---   */
+/*---  ---------------------------------------- */
+
+
 
 GLuint textureNames; /* Promenljiva u kojoj cuvamo generisano 'ime' teksture koju koristimo. */
+
+
 
 void drawMeadow() /* Funkcija za iscrtavanje livade - terena za igru. */
 {
@@ -59,11 +65,11 @@ void drawMeadow() /* Funkcija za iscrtavanje livade - terena za igru. */
     
     /* Iscrtavanje dekorativne trave duz kracih ivica terena. Bice pojasnjeno kod definicije odgovarajuce funkcije. */
     glPushMatrix();
-       drawDecorativeGrass(1,0);
+       drawDecorativeGrass(1);
     glPopMatrix();
 
     glPushMatrix();
-       drawDecorativeGrass(-1,0);
+       drawDecorativeGrass(-1);
     glPopMatrix();
          
     /* Inicijalizacija i primena teksture na povrsinu gde ovcice trce. */
@@ -82,105 +88,66 @@ void drawHedge(float minR, float maxR, float fixed, int indX) /* Funkcija za isc
            glTranslatef(fixed,5,(maxR + minR)/2.0);
 
        glPushMatrix(); 
-          if(indX)       /* Leva (ili gornja ako crtamo duz z-ose) uspravna greda. */
+          if(indX)              /* Leva (ili zadnja ako crtamo duz z-ose) uspravna greda. */
           {
-           glTranslatef(-(maxR-minR)*0.4,0,0);
-    }else {
-        glTranslatef(0,0,-(maxR-minR)*0.4);
-        glRotatef(2,0,1,0);
+              glTranslatef(-(maxR-minR)*0.4,0,0);
+    }     else {
+              glTranslatef(0,0,-(maxR-minR)*0.4);
+              glRotatef(2,0,1,0);
     }
-    glScalef(0.3 * GlobalXSize, GlobalYSize,0.3 * GlobalZSize);
-    glutSolidCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    if(indX)
-    {
-        glTranslatef((maxR-minR)*0.4,0,0);
-        glRotatef(5,0,1,0);
-    } else{
-        glTranslatef(0,0,(maxR-minR)*0.4);
-        glRotatef(5,0,1,0);
-    }
-    glScalef(0.3 * GlobalXSize,GlobalYSize,0.3 * GlobalZSize);
-    glutSolidCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    if(indX)
-    {
-        glTranslatef(0,0.7,0);
-        glRotatef(30,0,0,1);
-        glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
-
-    }
-    else{
-        glTranslatef(0,0.7,0);
-        glRotatef(30,1,0,0);
-        glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
-    }
-    glutSolidCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    if(indX)
-    {
-        glTranslatef(0,-0.7,0);
-        glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
-        glRotatef(-7,0,0,1);
-    }else{
-        glTranslatef(0,-0.7,0);
-        glRotatef(-7,1,0,0);
-        glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
-    }
-    glutSolidCube(1);
-    glPopMatrix();
-
-    glPopMatrix();
-}
-/*
-void drawBalls()
-{
-    int i;
-    double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y);
-    setBallMaterial(); // Postavljamo materijal na kugle
-    for(i=0;i< NumOfSheeps;i++)
-    {
-       glPushMatrix();
-       glTranslatef(Balls[i].pX,raiseBehindMeadow,Balls[i].pZ);
-       glScalef(RADIUS/MEADOWDIMENSION_X,2,RADIUS/MEADOWDIMENSION_Z);
-       glRotatef(Balls[i].angle,1,0,0);
-       glutSolidSphere(1,20,20);
+          glScalef(0.3 * GlobalXSize, GlobalYSize,0.3 * GlobalZSize);
+          glutSolidCube(1);
        glPopMatrix();
+
+       glPushMatrix();
+           if(indX)                    /* Desna (prednja) uspravna greda. */
+           {
+              glTranslatef((maxR-minR)*0.4,0,0);
+              glRotatef(5,0,1,0);
+    }     else{
+              glTranslatef(0,0,(maxR-minR)*0.4);
+              glRotatef(5,0,1,0);
     }
+          glScalef(0.3 * GlobalXSize,GlobalYSize,0.3 * GlobalZSize);
+          glutSolidCube(1);
+       glPopMatrix();
+
+       glPushMatrix();                /* Gornja poprecna greda. */
+          if(indX)
+         {
+            glTranslatef(0,0.7,0);
+            glRotatef(30,0,0,1);
+            glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
+         }
+          else{
+            glTranslatef(0,0.7,0);
+            glRotatef(30,1,0,0);
+            glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
+         }
+          glutSolidCube(1);
+       glPopMatrix();
+
+       glPushMatrix();                /* Donja poprecna greda. */
+          if(indX)
+          {
+             glTranslatef(0,-0.7,0);
+             glScalef((maxR-minR),0.15 * GlobalYSize,0.15 * GlobalZSize);
+             glRotatef(-7,0,0,1);
+          }else{
+             glTranslatef(0,-0.7,0);
+             glRotatef(-7,1,0,0);
+             glScalef(0.15 * GlobalXSize,0.15 * GlobalYSize,(maxR-minR));
+          }
+          glutSolidCube(1);
+       glPopMatrix();
+
+    glPopMatrix();
 }
 
-void drawSheeps()
-{
-    for(int i=0;i< NumOfSheeps;i++)
-    {
-        glPushMatrix();
-        glTranslatef(Balls[i].pX,1+ ((float)RADIUS/MEADOWDIMENSION_Y),Balls[i].pZ);
-        glScalef(1/MEADOWDIMENSION_X,1/MEADOWDIMENSION_Y,1/MEADOWDIMENSION_Z);
-        drawSheep(Balls[i].angle/180*PI);
-        glPopMatrix();
-    }
-    */
-
-    /* HACK:
-    if(on_going)
-    {
-       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
-       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
-       glutTimerFunc(TIMER_LOWER_INTERVAL,jumping,TIMER_ID_JUMPING);
-    }
-     */
-
-
-void drawObjects()
-{
+void drawObjects() /* Ovo je zapravo funkcija koja nam iscrtava ovce. Naziv ostao, zato sto je ranije bila i opcija za crtanje kugli. */
+{                  /* Obradjuje redom sve ovce iz niza, i za svaku ponaosob od njih poziva funkciju za iscrtavanje ovcica iz fajla sheep.c. */
     int i;
-    double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y);
+    double raiseBehindMeadow = 1+ ((float)RADIUS/MEADOWDIMENSION_Y); /* Samo da podigne ovcice iznad povrsina livade. */
     for(i=0;i< NumOfSheeps;i++)
     {
             glPushMatrix();
@@ -191,104 +158,43 @@ void drawObjects()
     }
 }
 
-void drawBlocks()
-{
+void drawBlocks()  /* Funkcija za iscrtavanje zatvorenih povrsina terena tokom igre. U zavisnosti od opsega X i Z koordinata u okviru kojih se    */
+{                  /* nalazi slobodna povrsina za ovcice. Ona iscrtava 4 'istegnute' (skalirane) 'kocke' koje ogradjuju slobodnu povrsinu za ovce.*/
     if(minX == -1 && minZ == -1 &&
        maxX == 1  && maxZ ==  1)
         return;
 
     glTranslatef(0,1.5,0);
 
-    glPushMatrix();
+    glPushMatrix();     /* Ogradjuje prednji deo slobodne povrsine za ovce. (kraj ka nama) */
        glTranslatef(0,0,(1.0+maxZ) * 0.5);
        glScalef(2,1,1-maxZ);
        glutSolidCube(1);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix();     /* Ogradjuje zadnji deo slobodne povrsine. (suprotan kraj od onog ka nama) */
        glTranslatef(0,0,(-1.0 + minZ) * 0.5);
        glScalef(2,1,minZ + 1);
        glutSolidCube(1);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix();     /* Ogradjuje desni deo slobodne povrsine. */
        glTranslatef((1 + maxX)*0.5,0,0);
        glScalef((1 - maxX),1,2);
        glutSolidCube(1);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix();     /* Ogradjuje levi deo slobodne povrsine. */
        glTranslatef((-1 + minX) * 0.5, 0, 0);
        glScalef(minX + 1,1,2);
        glutSolidCube(1);
     glPopMatrix();
 }
 
-/*
-void drawClouds()
-{
-    glPointSize(1.5);
-    glDisable(GL_LIGHTING);
-    glColor3f(0.97,0.97,0.97);   // Boja oblaka
-    srand(time(NULL)); //Inicijalizujemo random-generator koji ce nam nasumicno generisati pozicije tackica u oblacicicma
-    float cX,cY,cZ;  // Koordinate tacke u oblaku
-    float cXMin, cXMax, // Granicni opsezi u okviru kojih cemo crtati oblake
-            cYMin, cYMax,
-            cZMin, cZMax;
-    int  i,thickness; // Redom, pomocna indeksna promenljiva i gustina oblaka(ukupan broj tackica u oblaku)
-    cXMin = -5, cXMax = 5;  // Prvi crtamo tako da moze da se proteze od zadnjeg desnog coska
-    cYMin = 4.5, cYMax = 6;
-    cZMin = 0, cZMax = 10;
-    glBegin(GL_POINTS);
-    thickness=2000;
-    for(i=0;i<thickness;i++)
-    {
-        cX= ((float)rand()/RAND_MAX)*(cXMax-cXMin)+ cXMin;
-        cY= ((float)rand()/RAND_MAX)*(cYMax-cYMin)+ cYMin;
-        cZ= ((float)rand()/RAND_MAX)*(cZMax-cZMin)+ cZMin;
-
-        glVertex3f(cX,cY,cZ);
-
-    }
-
-
-    cXMin = -5, cXMax = 0;
-    cZMin = -10, cZMax = 0;
-
-
-    for(i=0;i<thickness;i++)
-    {
-        cX= ((float)rand()/RAND_MAX)*(cXMax-cXMin)+ cXMin;
-        cY= ((float)rand()/RAND_MAX)*(cYMax-cYMin)+ cYMin;
-        cZ= ((float)rand()/RAND_MAX)*(cZMax-cZMin)+ cZMin;
-        //glBegin(GL_POINTS);
-        glVertex3f(cX,cY,cZ);
-        //glEnd();
-    }
-
-
-    cXMin = 0, cXMax = 5;
-    cZMin = -10, cZMax = 10;
-
-
-    for(i=0;i<thickness;i++)
-    {
-        cX= ((float)rand()/RAND_MAX)*(cXMax-cXMin)+ cXMin;
-        cY= ((float)rand()/RAND_MAX)*(cYMax-cYMin)+ cYMin;
-        cZ= ((float)rand()/RAND_MAX)*(cZMax-cZMin)+ cZMin;
-        //glBegin(GL_POINTS);
-        glVertex3f(cX,cY,cZ);
-        //glEnd();
-    }
-    glEnd();
-    glLineWidth(1);
-    glEnable(GL_LIGHTING);
-}
-*/
-
-void initializeTexture()
-{
-    Image * image;
+/* NOTE: Ovaj kod je iskoriscen iz primera sa vezbi 32_textures. ----------------------------------------------------------------------------------- */
+void initializeTexture() /* Funkcija za inicijalizacuje teksture. Koristeci biblioteku "image" ona otvara binarnu .bmp datoteku, */
+{                        /* cita njen sarzaj i i funkcijom glGenTextures dodeljuje 'ime' teksturi koje se cuva u globalnoj promenljivoj */
+    Image * image;       /*  textureNames i pomocu kog mozemo da podesavamo parametre teksture i kasnije u drugim delovima programa da je koristimo. */
     glEnable(GL_TEXTURE_2D);
 
     glTexEnvf(GL_TEXTURE_ENV,
@@ -321,24 +227,24 @@ void initializeTexture()
 
     /* Unistava se objekat za citanje tekstura iz fajla. */
     image_done(image);
-}
+} /* ------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void applyTexture(float minX, float maxX , float minZ , float maxZ)
+void applyTexture()  /* Funkcija u kojoj primenjujemo inicijalizovanu teksturu na povrsinu gde ovce trce. */
 {
-    glBindTexture(GL_TEXTURE_2D, textureNames);
-    glBegin(GL_QUADS);
+    glBindTexture(GL_TEXTURE_2D, textureNames); /* Aktiviramo zeljenu teksturu.*/
+    glBegin(GL_QUADS);    /* Kreiramo povrsinu po kojoj ce biti 'zalepljena tekstura. */
+                          /* I povezujemo odgovajajuce coskove citave povrsine livade sa coskovima teksture. */
+       glTexCoord2f(0, 0);
+       glVertex3f(-1.0, 1.1, -1.0);
 
-    glTexCoord2f(0, 0);
-    glVertex3f(minX, 1.1, minZ);
+       glTexCoord2f(1, 0);
+       glVertex3f(1.0, 1.1, -1.0);
 
-    glTexCoord2f(1, 0);
-    glVertex3f(maxX, 1.1, minZ);
+       glTexCoord2f(1, 1);
+       glVertex3f(1.0, 1.1, 1.0);
 
-    glTexCoord2f(1, 1);
-    glVertex3f(maxX, 1.1, maxZ);
-
-    glTexCoord2f(0, 1);
-    glVertex3f(minX, 1.1, maxZ);
+       glTexCoord2f(0, 1);
+       glVertex3f(-1.0, 1.1, 1.0);
     glEnd();
 
 
@@ -347,7 +253,7 @@ void applyTexture(float minX, float maxX , float minZ , float maxZ)
 }
 
 
-void set_normal_and_vertex(float u, float v)
+void set_normal_and_vertex(float u, float v) /* Pomocna funkcija za postavljanje vektora normala. (Neophodno pri parametrizaciji valjka) */
 {
     glNormal3f(
             sin(v),
@@ -361,135 +267,69 @@ void set_normal_and_vertex(float u, float v)
     );
 }
 
+void drawScythe()  /* Funkcija koja iscrtava kosu, adaptirana funkcija iz fajla scythe.c (3D-Models). */
+{                  /* Nezavisna je od polozaja i dimenzija koje su uklapaju u igru, jer je to sve regulisano u omotac-funkciji drawCloser. */ 
+                   /* NOTE: Svesna sam da u kodu ima puno 'magicnih konstanti' (koje nisu pozeljne u praksi), */
+    float u, v;    /* pri modelovanju kose su naizmenicno menjani parametri i prevodjen program sve do zeljenog izgleda. */
 
+    glPushMatrix(); /* Prvi deo koda, crtamo drsku kose. (valjak)  */
+       glRotatef(10,0,0,1);
+       glRotatef(-80,0,1,0);
+       glScalef(0.5,0.5,0.5);
+       glScalef(0.25,1.2,0.25);
+       for (u = 0; u < PI; u += PI / 20) {
+           glBegin(GL_TRIANGLE_STRIP);
+              for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {
+                 set_normal_and_vertex(u, v);
+                 set_normal_and_vertex(u + PI / 20, v);
+              }
+           glEnd();
+        }
 
-void setLightGrayMaterial()
-{
-    GLfloat materialCloserAmbient[] = {0.2,0.2,0.2,1};
-    GLfloat materialCloserDiffuse[] = {0.8,0.8,0.8,1};
-    GLfloat materialCloserSpecular[] = {0.9,0.9,0.9,1};
-    GLfloat shininess=10;
-    glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,materialCloserAmbient);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,materialCloserDiffuse);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,materialCloserSpecular);
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS, shininess);
-}
-
-
-
-
-
-
-void drawObject()
-{
-
-    float u, v;
-
-    glPushMatrix();
-    glRotatef(10,0,0,1);
-    glRotatef(-80,0,1,0);
-    glScalef(0.5,0.5,0.5);
-    glScalef(0.25,1.2,0.25);
-    for (u = 0; u < PI; u += PI / 20) {
+       glScalef(1.2,0.1,1.2); /* Drugi deo, crtamo ostar metalni deo. (istegnuta kupa) */
+       setLightGrayMaterial();
+       for (u = 0; u < PI; u += PI / 20) {
         glBegin(GL_TRIANGLE_STRIP);
-        for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {   //NOTE: Dovoljna aproksimacija je 9 stepeni. ;)
+        for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {
             set_normal_and_vertex(u, v);
             set_normal_and_vertex(u + PI / 20, v);
         }
         glEnd();
-    }
-    glScalef(1.2,0.1,1.2);
-    setLightGrayMaterial();
-    for (u = 0; u < PI; u += PI / 20) {
-        glBegin(GL_TRIANGLE_STRIP);
-        for (v = 0; v <= PI*2 + EPSILON; v += PI / 20) {   //NOTE: Dovoljna aproksimacija je 9 stepeni. ;)
-            set_normal_and_vertex(u, v);
-            set_normal_and_vertex(u + PI / 20, v);
         }
-        glEnd();
-    }
-    glScalef(1/(1.2*0.25),1/(0.1*1.2),1/(1.2*0.25));
-    glRotatef(30,0,0,1);
-    glutSolidCone(0.2,3,20,20);
-    glTranslatef(0,0,3);
-    glRotatef(60,0,0,1);
-    //glutSolidCone(0.1,0.5,20,20);
-    glPopMatrix();
-    glEnd();
-}
-
-
-
-
-
-void drawCloser()
-{
-    glPushMatrix();
-    glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
-    glScalef(0.5*GlobalXSize,GlobalYSize,0.5*GlobalZSize);
-    drawObject();
+       glScalef(1/(1.2*0.25),1/(0.1*1.2),1/(1.2*0.25));
+       glRotatef(30,0,0,1);
+       glutSolidCone(0.2,3,20,20);
+       glTranslatef(0,0,3);
+       glRotatef(60,0,0,1);
     glPopMatrix();
 }
 
+void drawCloser()  /* Omotac funkcija za crtanje zatvarajuceg objekta. Namerno je koristim iz dva razloga: */
+{                  /* Prvo, da bih u njoj podesila parametre kako bi se uklopila u igru i dimenzije terena.(da funkcija bude nezavisna od te igre i samih parametara i bude upotrebljiva negde drugde) */
+    glPushMatrix();/* Drugo, da bih lako mogao da se menja zatvarajuci objekat(samo zamenim ime funkcije, na pocetku razvoja je bilo apstrahovano valjkom i funkcijom drawCylinder) */
+       glTranslatef(Closer.pX,Closer.pY,Closer.pZ);
+       glScalef(0.5*GlobalXSize,GlobalYSize,0.5*GlobalZSize);
+       drawScythe(); /* Podeseni parametri, sad pozivamo funkciju za iscrtavanje objekta. */
+    glPopMatrix();
+}
 
-/*
-static void drawCylinder()
+void drawDecorativeGrass(int translateParameter) /* Funkcija koja iscrtava dekorativnu travu na prednjem i zadnjem kraju terena. */
 {
-    float h,u;
-    glBegin(GL_TRIANGLE_FAN);
-    glNormal3f(0,1,0);
-    glVertex3f(0,1,0);
-    for(u=0;u<=2*PI;u+= PI/20)
-    {
-        glVertex3f(cos(u),1,sin(u));
-        glVertex3f(cos(u+PI/20),1,sin(u+PI/20));
-    }
-    glEnd();
+    glScalef(GlobalXSize,GlobalYSize,GlobalZSize);  /* Hocemo da ovde radimo sa svetskim koordinatama. */
+    glTranslatef(-MEADOWDIMENSION_X+0.5,2*MEADOWDIMENSION_Y,translateParameter*MEADOWDIMENSION_Z);
 
-    glBegin(GL_TRIANGLE_STRIP);
-    for(h=1-PI/20;h>-1-EPSILON;h-=PI/20)
-        for(u=0;u<=2*PI+ EPSILON;u+=PI/20)
-        {
-            glNormal3f(cos(u),0,sin(u));
-            glVertex3f(cos(u),h,sin(u));
-            glVertex3f(cos(u),h+PI/20,sin(u));
-        }
-    glEnd();
-}*/
-
-void drawDecorativeGrass(int translateParameter, int parameterZ)
-{
-    glScalef(1.0/MEADOWDIMENSION_X,1.0/MEADOWDIMENSION_Y,1.0/MEADOWDIMENSION_Z);
-    if(parameterZ) glTranslatef(translateParameter* MEADOWDIMENSION_X,2*MEADOWDIMENSION_Y,-MEADOWDIMENSION_Z + 0.5);
-    else glTranslatef(-MEADOWDIMENSION_X+0.5,2*MEADOWDIMENSION_Y,translateParameter*MEADOWDIMENSION_Z);
-    GLdouble equation[] = {0,1,0,0};
+    GLdouble equation[] = {0,1,0,0}; /* Jednacina clipping ravni y=0. Njom cemo da isecemo donje delove zarotiranih kocki koje cine travu. */
     glClipPlane(GL_CLIP_PLANE0,equation);
     glEnable(GL_CLIP_PLANE0);
-    GLdouble equation2[] = {0,0,-1,MEADOWDIMENSION_Z + 1};
-    if(parameterZ)
-    {
-        equation2[0] = -1;
-        equation2[2] = 0;
-        equation2[3] = MEADOWDIMENSION_X + 1;
-    }
-    glClipPlane(GL_CLIP_PLANE1,equation2);
-    glEnable(GL_CLIP_PLANE1);
-    int i,i_max = 8*2;
-    if(parameterZ) i_max *= 2;
-    for(i=0;i<i_max;i++) {
+
+    int i,i_max = 8*2; /* Jedna 'travcica' ce biti siroka osminu dimenzije terena (ta dimenzija je zapravo polovina prave dimenzije), */
+    for(i=0;i<i_max;i++) {  /* tj. trebace nam 2 puta toliko da iscrtamo. */
         glPushMatrix();
-        if(parameterZ)
-            glScalef(1,1,MEADOWDIMENSION_Z/(0.8*0.2));
-        else glScalef( MEADOWDIMENSION_X / 8.0, 1, 1);
-        if(parameterZ)
-            glRotatef(-45,1,0,0);
-        else glRotatef(-45, 0, 0, 1);
-        glutSolidCube(1);
+           glScalef( MEADOWDIMENSION_X / 8.0, 1, 1); /* Istezemo kocku tako da na kraju ide vise u visinu. */
+           glRotatef(-45, 0, 0, 1);    /* Rotiramo je za 45 stepeni (zato dobijamo efekat trougla). */
+           glutSolidCube(1);          /* Crtamo 'kocku' . */
         glPopMatrix();
-        if(parameterZ)
-            glTranslatef(0,0,MEADOWDIMENSION_X/8.0);
-        else glTranslatef(MEADOWDIMENSION_X/8.0,0,0);
+        glTranslatef(MEADOWDIMENSION_X/8.0,0,0);  /* Transliramo za njenu sirinu po x - osi za crtanje sledece travke. */
     }
     glDisable(GL_CLIP_PLANE0);
-    glDisable(GL_CLIP_PLANE1);
 }

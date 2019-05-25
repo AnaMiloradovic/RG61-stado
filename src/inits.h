@@ -18,6 +18,7 @@
 #define RADIUS (0.5)
 #define TIME_OUT (75*50) /* TODO Moguce da ovde malo kasni zbog virtuelne masine itd */
 #define NIGHT_NEAR (60*50)
+#define TIMER_ID_ROLLING (0)  
 
 typedef struct {
     float pX,pZ, // Pozicija na terenu
