@@ -59,9 +59,7 @@ void onDisplayFunction()
                      COLOR_SKY_G -  to_dark_G * timePast,
                      COLOR_SKY_B -  to_dark_B * timePast, 0);      
     }
-    glClearColor(COLOR_SKY_R -  to_dark_R * timePast, 
-                 COLOR_SKY_G -  to_dark_G * timePast,
-                 COLOR_SKY_B -  to_dark_B * timePast, 0);
+
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_LIGHTING); 
