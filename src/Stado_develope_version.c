@@ -1,136 +1,157 @@
+/* Glavni fajl aplikacije. U okviru njega se nalaze main i on_display funkcija. */
+
 #include <GL/glut.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
-#include "sheep.h"
-#include "colors.h" //Ovde cuvamo boje koje koristimo u igri
-#include "inits.h" //Ovde nam se nalaze deklaracije inicijalizacionih funkcija
-#include "callbacks.h" //Callback funckije
-#include "draw_objects.h" //Funckije za iscrtavanje objekata
-#include "light_and_materials.h" //Funkcije za podesavanje osvetljenja i postavljanje materijala
-#include "levels.h" //Datoteka sa brzinama po nivoima
-#include "game_dynamics.h" //Funckije za kretanja u igri
+#include "colors.h" /* Potrebno, jer su u njemu simbolicke konstante za boju neba danju i nocu. */
+#include "inits.h" /* Ovde su nam deklarisane inicijalizacione funkcije. */
+#include "draw_objects.h" /* Ovde su nam deklarisane funkcije za iscrtavanje objekata u igri. */
+#include "light_and_materials.h" /* Ovde su nam deklarisane funkcije za podesavanje osvetljenja i postavljanje materijala. */
+#include "game_dynamics.h" /* Ovde su nam deklarisane funkcije za dinamiku objekata u igrici. */
 
-const char pause[] = "Pauza";
+const char pause[] = "Pauza"; /* String od kog pravimo bitmapu za pauzu i duzina tog stringa. */
 #define PAUZE_LEN (5)
-extern int ifJustSheeps;
-extern BALL Balls[];
-extern CLOSER Closer;
-extern char Name[];
-extern int NumOfSheeps, Level;
-extern float minX,maxX,minZ,maxZ;
-extern int on_going;
-extern int winner;
-/* ********************* */
-extern int hit;
-extern char curDir;
-extern int timePast;
+
+/* Deklaracije neophodnih promenljivih iz drugih datoteka. */
+extern CLOSER Closer; /* Promenljiva - struktura zatvarajuceg objekta. (kose) */
+extern float minX,maxX,minZ,maxZ; /* Unutar ovih granica X i Z koordinata je slobodna povrsina za ovce. */
+extern int on_going; /* Glavna kontrolna promenljiva igre - da li je igra u toku ili moze da se tumaci kao da li se objketi krecu, animacija aktivna. */
+extern int winner;   /* Kontrolna promenljiva igre - da li je igrac pobedio. */
+extern int hit;      /* Jos jedna vazna kontrolna promenljiva igre - da li igrac trenutno iscrtava zatvarajucu putanju. */
+extern int timePast; /* Koliko je do sad puta pozvan tajmer - koliko vremena je proteklo */
+
+extern struct tm* today; /* Struktura struct tm koja cuva tekuci dan. */
+
+float to_dark_R = (((float) COLOR_SKY_R - DARK_BLUE_R) / TIME_OUT); /* Korak za gasenje svetla i prelazak iz svetlo plave boje u tamno plavu. */
+float to_dark_G = (((float) COLOR_SKY_G - DARK_BLUE_G) / TIME_OUT); /* Imamo ukupno TIME_OUT poziva za prelazak, i u svakom od poziva podjednako smanjujemo R, G i B komponentu boje i svetla. */
+float to_dark_B = (((float) COLOR_SKY_B - DARK_BLUE_B) / TIME_OUT);
+
+float to_dark_R_S = (((float) COLOR_SKY_R - DARK_BLUE_R) / (TIME_OUT * 1.5)); /* Korak za gasenje svetla po letnjem racunanju vremena i prelazak iz svetlo plave boju u tamno plavu. */
+float to_dark_G_S = (((float) COLOR_SKY_G - DARK_BLUE_G) / (TIME_OUT * 1.5)); /* (Dan traje duze) */
+float to_dark_B_S = (((float) COLOR_SKY_B - DARK_BLUE_B) / (TIME_OUT * 1.5));
 
 int main(int argc, char* argv[])
 {
-   if(argc > 1 && argv[1][0] == '-' && argv[1][1] == 'k')
-       ifJustSheeps = 0;
-   gameDataInitialization();
-   glutInit(&argc,argv);  //Neophodna inicijalizacija glut-a
+   gameDataInitialization(); /* Inicijalizacija osnovnih podataka o igri. */
+   glutInit(&argc,argv);  /* Neophodna inicijalizacija GLUT-a. */
    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
    
-   graphicsInitialization();
-   glutMainLoop();
+   graphicsInitialization(); /* Graficka inicijalizacija. */
+   glutMainLoop();           /* Program ulazi u glavnu petlju. */
    return 0;
 }
 
 void onDisplayFunction()
 {
-    glClearColor(COLOR_SKY_R - (((float) COLOR_SKY_R - DARK_BLUE_R) / TIME_OUT) * timePast,
-                 COLOR_SKY_G - (((float) COLOR_SKY_G - DARK_BLUE_G) / TIME_OUT) * timePast,
-                 COLOR_SKY_B - (((float) COLOR_SKY_B - DARK_BLUE_B) / TIME_OUT) * timePast,0); //Boja neba - pre nego sto postavimo osvetljenje
+   /* Postavljamo boju neba u skladu sa proteklim vremenom i ostale OpenGL inicijalizacije. */
+    
+    if(today != NULL && today->tm_mon >= 5 && today->tm_mon <= 8)
+    {
+       glClearColor(COLOR_SKY_R -  to_dark_R_S * timePast, 
+                    COLOR_SKY_G -  to_dark_G_S * timePast,
+                    COLOR_SKY_B -  to_dark_B_S * timePast, 0);
+    }
+
+    else {
+        glClearColor(COLOR_SKY_R -  to_dark_R * timePast, 
+                     COLOR_SKY_G -  to_dark_G * timePast,
+                     COLOR_SKY_B -  to_dark_B * timePast, 0);      
+    }
+    glClearColor(COLOR_SKY_R -  to_dark_R * timePast, 
+                 COLOR_SKY_G -  to_dark_G * timePast,
+                 COLOR_SKY_B -  to_dark_B * timePast, 0);
     glEnable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Cistimo sadrzaj prozora
-    glEnable(GL_LIGHTING); //Postavljamo osvetljenje
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_LIGHTING); 
     glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE);
-    /*
-    //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
-    //drawClouds();
-     */
-    setSunLight();
 
-    glMatrixMode(GL_MODELVIEW);  //Podesavamo scenu i pogled
+    setSunLight(); /* Postavljamo dnevno osvetljenje. */
+
+
+    glMatrixMode(GL_MODELVIEW);  /* Podesavamo polozaj kamere. */
     glLoadIdentity();
-    if(winner)
-        gluLookAt(MEADOWDIMENSION_X * (maxX + minX) * 0.5, 10.0 * MEADOWDIMENSION_Y, MEADOWDIMENSION_Z * (maxZ + 0.1),
+    if(winner)                                         /* Ako je igrac pobedio, priblizicemo kameru blize zatvorenim ovcicama. */
+        gluLookAt(MEADOWDIMENSION_X * (maxX + minX) * 0.5, 10.0 * MEADOWDIMENSION_Y, MEADOWDIMENSION_Z * (maxZ + 0.15),
                 MEADOWDIMENSION_X * (maxX + minX) * 0.5, 3.0 * MEADOWDIMENSION_Y, MEADOWDIMENSION_Z * (maxZ + minZ) * 0.5,
                   0,1,0);
-    else if(Closer.pZ*MEADOWDIMENSION_Z <= 0)
+
+    else if(Closer.pZ*MEADOWDIMENSION_Z <= 0)          /* Ako kosa ode mnogo daleko po z-osi, pocinjemo i mi da idemo za njom. */
         gluLookAt(0,5,Closer.pZ*MEADOWDIMENSION_Z+13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0);
-    else
-    gluLookAt(0,5,13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 
-    setMeadowMaterial(); // Postavljamo materijal na livadu
-    glPushMatrix(); // Iscrtavamo livadu(glavni teren) gde ce nam trcati ovce.
-    drawMeadow(); // Ne radimo glPopMatrix(), jer hocemo da nam na dalje koordinatni sistem bude
-                 // vezan za teren.
-    glPushMatrix();
-       drawBlocks();
-    glPopMatrix();
-
-    initialPos();   // Inicijalizujemo pocetne pozicije kugli
-    drawObjects();
+    else                                               /* Podrazumevani polozaj kamere. */
+        gluLookAt(0,5,13,Closer.pX*MEADOWDIMENSION_X/10.0,Closer.pY*MEADOWDIMENSION_Y+1,Closer.pZ*MEADOWDIMENSION_Z,0,1,0); // Pogled(posmatraceva pozicija, tacka pogleda, 'vektor nagore')
 
 
-    glPushMatrix();
-     setCloserMaterial();
-     if(!winner)
-        drawCloser();  // Iscrtavamo valjak
-       // else drawHedge();
-    glPopMatrix();
+    setMeadowMaterial(); /* Postavljamo materijal na livadu. */
+    glPushMatrix();  /* Iscrtavamo livadu(glavni teren) gde ce nam trcati ovce. */
+       drawMeadow(); /* Ne radimo glPopMatrix(), jer hocemo da nam na dalje koordinatni sistem bude vezan za teren. */
+       glPushMatrix();   /* Iscrtavamo zatvorene povrsine. */
+          drawBlocks();
+       glPopMatrix();
 
-     if(hit)      /* TODO USLOVI */
-     {
+       initialPos();   /* Inicijalizujemo pocetne pozicije ovaca, zatvarajuceg objekta i pocetne vrednosti za minX, maxX, minZ i maxZ. 
+                          Funkcija ce se izvrsavati zapravo samo pri prvom pozivu display zbog provere indikatora unutar funkcije na pocetku. */
+       glPushMatrix();
+          drawObjects();  /* Crtamo ovce. */
+       glPopMatrix();
+
+
+       glPushMatrix();
+          setCloserMaterial();
+          if(!winner)
+            drawCloser();  /* Iscrtavamo kosu. */
+       glPopMatrix();
+
+       if(hit)      /* Ako trenutno iscrtavamo zatvarajucu putanju, pozivamo odgovarajuce funkcije. */
+       {
          drawHitting();
          drawHittingPath();
-     }
+       }
 
-    if(winner)
-    {
-        glPushMatrix();
-           drawHedge(minZ,maxZ,maxX,0);
-        glPopMatrix();
+       setMeadowMaterial(); 
+       glPushMatrix();
+          drawBlocks();  /* Crtamo zagradjene povrsine. */
+       glPopMatrix();
 
-        glPushMatrix();
-           drawHedge(minZ,maxZ,minX,0);
-        glPopMatrix();
+       if(winner)  /* Ako je igrac vec pobedio, crtamo ogradu oko zagradjenih ovaca. */
+       {
+          glPushMatrix(); /* Desno po duzini. */
+             drawHedge(minZ,maxZ,maxX,0);
+          glPopMatrix();
 
-        glPushMatrix();
-           drawHedge(minX,maxX,minZ,1);
-        glPopMatrix();
+          glPushMatrix(); /* Levo po duzini. */
+             drawHedge(minZ,maxZ,minX,0);
+          glPopMatrix();
 
-        glPushMatrix();
-           drawHedge(minX,maxX,maxZ,1);
-        glPopMatrix();
-    }
-    setMeadowMaterial();
-    glPushMatrix();
-       drawBlocks();
-    glPopMatrix();
-    glPopMatrix();
+          glPushMatrix(); /* Nazad po sirini. */
+             drawHedge(minX,maxX,minZ,1);
+          glPopMatrix();
+
+          glPushMatrix(); /* Napred po sirini. */
+             drawHedge(minX,maxX,maxZ,1);
+          glPopMatrix();
+       }
+    glPopMatrix(); /* Od sada vise nismo u koordinatnom sistemu vezanom za teren. */
 
 
-    if(timePast == TIME_OUT)
+    if(timePast == TIME_OUT) /* Proveravamo da nije vec isteklo vreme - dovoljan broj poziva tajmera. */
     {
         printf("Isteklo vreme - kraj igre \n");
         exit(EXIT_SUCCESS);
     }
 
+    else if(timePast == NIGHT_NEAR) /* Ako je kraj igre vrlo blizu, upozoravamo igraca. */
+        printf("Pozuri! Noc samo sto nije skroz pala!\n");
 
-    if(on_going)
+    if(on_going) /* Ako je jos uvek igra u toku (nije isteklo vreme, trenutno nije pauza i igrac jos nije pobedio), registruje se tajmer. */
     {
        glutTimerFunc(TIMER_INTERVAL,rollingBalls,TIMER_ID_ROLLING);
        timePast++;
     }
 
-    else if(!winner)
+    else if(!winner) /* Ako nije igra u toku, a igrac nije pobedio, pauza je. */
     {
         glPushMatrix();
         setLetters();
@@ -139,5 +160,5 @@ void onDisplayFunction()
            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,pause[i]);
     }
     
-    glutSwapBuffers();
+    glutSwapBuffers(); /* Slika se salje na ekran. */
 }

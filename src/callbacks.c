@@ -34,7 +34,7 @@ void onKeyboardFunction(unsigned char key, int x, int y) /* Odgovarajuce reakcij
     switch(key)
     {
         case 27:  /* esc - taster, Ako se pobedi u igri, treba ga stisnuti da se izadje iz igre. */
-            printf("Izasli ste iz igre.");  /* Ako se klikne u sred igre, momentalno se ista napusta, bez obzira na stanje igre. */
+            printf("Izasli ste iz igre.\n");  /* Ako se klikne u sred igre, momentalno se ista napusta, bez obzira na stanje igre. */
             glDeleteTextures(1, &textureNames);  /* Oslobadjamo resurs od teksture. */
             exit(0);
             break;

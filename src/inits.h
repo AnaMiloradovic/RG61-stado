@@ -1,49 +1,47 @@
+/* Zaglavlje sa deklaracijama inicijalizacionih funkcija, deklaracijama struktura osnovnih objekata u igri
+   i sa simbolickim konstantama. */
 #ifndef INITS_H
 #define INITS_H
 
-#define WINDOW_HEIGHT (800)    // Konstanta za duzinu prozora
-#define WINDOW_WIDTH  (1000)   // Konstanta za sirinu prozora
-#define WINDOW_POSITION_X (400)  // Konstanta za poziciju prozora
-#define WINDOW_POSITION_Y (100)  // Konstanta za poziciju prozora
-                              //TODO: Vrednosti koje smestaju prozor u centar naseg ekrana
-#define MAX_NUM_OF_SHEEPS (5) // Maksimalan moguc broj ovaca 
+#define WINDOW_HEIGHT (800)    /* Konstanta za duzinu prozora */
+#define WINDOW_WIDTH  (1000)   /* Konstanta za sirinu prozora */
+#define WINDOW_POSITION_X (400)  /* Konstanta za poziciju prozora na ekranu. */
+#define WINDOW_POSITION_Y (100)  /* Konstanta za poziciju prozora na ekranu. */
+                            
+#define MAX_NUM_OF_SHEEPS (5) /* Maksimalan moguc broj ovaca */
 
-#define NOT_TO_CHECK (0) // TODO Ako se utvrdi kolizija i-te ovce(kugle), nije potrebno azurirati smer njene brzine.
-#define TO_CHECK (1)    //TODO  Ako se utvrdi kolizija i-te ovce(kugle), azurira se njena brzina.
+#define PI (3.141592653589793) /* Konstanta PI */
 
-//Dimenzje livade i poluprecnik kugle (u svetskom koordinatnom sistemu)
+/* Dimenzje livade (u svetskom koordinatnom sistemu) */
 #define MEADOWDIMENSION_X (5.0)
 #define MEADOWDIMENSION_Y (0.25) 
 #define MEADOWDIMENSION_Z (10.0) 
-#define RADIUS (0.5)
-#define TIME_OUT (75*50) /* TODO Moguce da ovde malo kasni zbog virtuelne masine itd */
-#define NIGHT_NEAR (60*50)
-#define TIMER_ID_ROLLING (0)  
 
-typedef struct {
-    float pX,pZ, // Pozicija na terenu
-           vX, vZ,   // X i Z komponente brzine (zavisice i od samog nivoa, od koga zavisi intenzitet ukupne brzine,
-              alfa,   // ali i od ugla alfa koji odredjuje odnos ove dve brzine.
-                     // Ako je v ukupna brzina, onda je vX = v*cos(alfa) i vZ = v*sin(alfa).
-                     // Ipak, umesto da cuvamo informacije o ukupnoj brzini, mi pamtimo obe komponente brzine
-                     // jer su funkcije sin i cos vremenski skupe da bi se svaki put racunale.
-    angle,w_angle;  // Tekuci ugao rotacije i ugaona brzina kotrljanja kugle
-} BALL;  //Struktura u kojoj cuvamo informacije o ovcama(ili kuglama). Polje angle ima razlicito znacenje kod ove dve implementacije:
-// Kod kugle ona predstavlja ugao za koji je zarotirana kugle, dok kod ovaca ona predstavlja ugao sinusa koji odredjuje njenu
-// y-koordinatu (tj. koliko je ovcica 'poskocila' u vazduhu)
+#define RADIUS (0.5) /* Poluprecnik sfere opisane oko ovce, u funkciji za detekciju kolizije ovce i dalje apstrahujemo kuglama. */ 
+#define TIME_OUT (75*50) /* Maksimalan moguc broj pozivanja tajmera - kada se ovoliko puta pozove funkcija za kretanje ovaca - vreme za igru je isteklo. */
+#define NIGHT_NEAR (60*50) /* Posle ovoliko pozivanja tajmera blizu je kraj igre. */
+#define TIMER_INTERVAL (20) /* Na ovoliko milisekundi ce se pozivati tajmer. */
+#define TIMER_ID_ROLLING (0)  /* ID tajmera vezanog za funkciju kretanja ovaca. */
+
+typedef struct { /* Struktura ovcice */
+    float pX,pZ, /* Pozicija na terenu */
+           vX, vZ,   /* X i Z komponente brzine (zavise i od samog nivoa, od koga zavisi intenzitet ukupne brzine, */
+              alfa,  /* a od konstante alfa zavisi odnos izmedju te 2 komponente. */
+    angle; /* Angle - koliko ce jos ovcica biti podignuta iznad terena. 
+            Zapravo je ta velicina izrazena srazmerno sinusu ovog ugla, detaljnije o ovome je u fajlu sheep.c . */
+} BALL;
 
 typedef struct {
     float pX, pY, pZ, vX, vZ;
-} CLOSER; // TODO Struktura u kojoj cuvamo informacije o objektu koji zatvara ovce.
-
+} CLOSER; /* Struktura u kojoj cuvemo informacije o zatvarajucem objektu. */
 
 typedef struct {
     float pX,pY,pZ;
-} POINT; // Struktura za cuvanje informacija o tackama na terenu (neophodno za iscrtavanje putanje kojom zatvaramo povrsinu na terenu)
+} POINT; /* Struktura za cuvanje informacija o tackama na terenu. */
 
-void gameDataInitialization();  //Funkcija za unos podataka o igri
-void graphicsInitialization(); //Neophodne graficke inicijalizacije
-void initialPos(); //inicijalizacije pocetnu poziciju kugli
+void gameDataInitialization();  /* Funkcija za inicijalizaciju podataka o igri. */
+void graphicsInitialization();  /* Funkcija za graficku inicijalizaciju igre. */
+void initialPos(); /* Inicijalizacija pocetnih polozaja i brzina zatvarajuceg objekta i ovci. */
 
-#define PERCENT_PER_SHEEP (10)
-#endif
+#define PERCENT_PER_SHEEP (10) /* Default-an maksimalan dozvoljeni slobodan procenat povrsine po ovci. (za pobedu) */
+#endif                         /* Za vise nivoe ce u proverama pobede biti smanjivan. */

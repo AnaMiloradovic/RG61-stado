@@ -1,3 +1,4 @@
+/* Zaglavlje sa deklaracijama funkcija za iscrtavanje objekata u igri i funkcija za teksture. */
 #ifndef _DRAW_OBJECTS_
 #define _DRAW_OBJECTS_
 
