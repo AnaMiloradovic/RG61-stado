@@ -202,7 +202,7 @@ void drawObject()   /* Telo funkcije koja nam iscrtava objekat - kosu. */
 static void on_display(void) 
 {
     /* Ciscenje prozora, podesavanje kamere i podesavanje svetla.*/
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
