@@ -20,6 +20,7 @@ extern int on_going; /* Glavna kontrolna promenljiva igre - da li je igra u toku
 extern int winner;   /* Kontrolna promenljiva igre - da li je igrac pobedio. */
 extern int hit;      /* Jos jedna vazna kontrolna promenljiva igre - da li igrac trenutno iscrtava zatvarajucu putanju. */
 extern int timePast; /* Koliko je do sad puta pozvan tajmer - koliko vremena je proteklo */
+extern GLuint textureNames; /* 'Ime' teksture koju smo koristili za teren. */
 
 extern struct tm* today; /* Struktura struct tm koja cuva tekuci dan. */
 
@@ -135,10 +136,12 @@ void onDisplayFunction()
        }
     glPopMatrix(); /* Od sada vise nismo u koordinatnom sistemu vezanom za teren. */
 
-
-    if(timePast == TIME_OUT) /* Proveravamo da nije vec isteklo vreme - dovoljan broj poziva tajmera. */
+    /* Proveravamo da nije vec isteklo vreme - dovoljan broj poziva tajmera. */
+    if((today != NULL && today->tm_mon >= 5 && today->tm_mon <= 8 && timePast == 1.5 * TIME_OUT)   ||
+        (timePast == TIME_OUT)  )
     {
         printf("Isteklo vreme - kraj igre \n");
+        glDeleteTextures(1,&textureNames);
         exit(EXIT_SUCCESS);
     }
 
