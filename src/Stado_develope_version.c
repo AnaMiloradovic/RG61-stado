@@ -138,7 +138,7 @@ void onDisplayFunction()
 
     /* Proveravamo da nije vec isteklo vreme - dovoljan broj poziva tajmera. */
     if((today != NULL && today->tm_mon >= 5 && today->tm_mon <= 8 && timePast == 1.5 * TIME_OUT)   ||
-        (timePast == TIME_OUT)  )
+    ((  today == NULL || today->tm_mon <  5 || today->tm_mon > 8 ) && timePast == TIME_OUT)  )
     {
         printf("Isteklo vreme - kraj igre \n");
         glDeleteTextures(1,&textureNames);
