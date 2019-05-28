@@ -33,13 +33,13 @@ Da li možete da sačuvate sve ovce i dovedete ih kući žive? 🐑 Cilj igre je
 
 Igrica je pravljena za Linux operativne sisteme.
 Da bi igrica mogla da se pokrene, neophodno je da se instalira OpenGL i glut.
-Makefile za prevođenje izvornog koda se nalazi u [src]("src") direktorijumu.
+Makefile za prevođenje izvornog koda se nalazi u [src]("https://github.com/MATF-RG18/RG61-stado/tree/master/src") direktorijumu.
 <br/>
 
 ## :pencil: Izvorne datoteke
 
-Izvorne datoteke za ovu igricu se nalaze u [src]("src") direktorijumu. <br/>
-Specijalno, zasebne implementacije 3D - modela u ovoj igrici se nalaze  [3D - Models]("3D-Models") direktorijumu.
+Izvorne datoteke za ovu igricu se nalaze u [src]("https://github.com/MATF-RG18/RG61-stado/tree/master/src") direktorijumu. <br/>
+Specijalno, zasebne implementacije 3D - modela u ovoj igrici se nalaze  [3D - Models]("https://github.com/MATF-RG18/RG61-stado/tree/master/3D-Models") direktorijumu.
 <br/>
 <br/>
 <br/>
